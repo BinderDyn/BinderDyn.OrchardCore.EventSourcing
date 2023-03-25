@@ -6,6 +6,7 @@ public class Event<T>
 {
     public Guid EventId { get; set; }
     public Guid? OriginalEventId { get; set; }
+    public string? ReferenceId { get; set; }
     public T Payload { get; set; }
     public string PayloadType { get; set; }
     public DateTime Created { get; set; }

@@ -9,7 +9,7 @@ public interface IEventRepository
     Task Add<T>(IEnumerable<Event<T>> events);
     Task Update<T>(Event<T> newEventData);
     Task<Event<T>> Get<T>(Guid eventId);
-    Task<Event<T>> GetNextPending<T>();
+    Task<Event<T>> GetNextPending<T>(string? referenceId = null);
     Task<IEnumerable<Event<T>>> GetByState<T>(params EventState[] states);
 }
 
@@ -35,7 +35,7 @@ public class EventRepository : IEventRepository
         throw new NotImplementedException();
     }
 
-    public async Task<Event<T>> GetNextPending<T>()
+    public async Task<Event<T>> GetNextPending<T>(string? referenceId = null)
     {
         throw new NotImplementedException();
     }
