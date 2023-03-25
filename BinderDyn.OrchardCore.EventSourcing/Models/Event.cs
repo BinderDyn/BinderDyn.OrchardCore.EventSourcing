@@ -1,3 +1,5 @@
+using BinderDyn.OrchardCore.EventSourcing.Enums;
+
 namespace BinderDyn.OrchardCore.EventSourcing.Models;
 
 public class Event<T>
@@ -6,6 +8,7 @@ public class Event<T>
     public Guid? OriginalEventId { get; set; }
     public T Payload { get; set; }
     public string PayloadType { get; set; }
-    public DateTimeOffset Created { get; set; }
-    public DateTimeOffset? Processed { get; set; }
+    public DateTime Created { get; set; }
+    public DateTime? Processed { get; set; }
+    public EventState EventState { get; set; }
 }

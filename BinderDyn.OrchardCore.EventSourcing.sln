@@ -4,7 +4,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinderDyn.OrchardCore.Event
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinderDyn.Test.OrchardCore.EventSourcing", "BinderDyn.Test.OrchardCore.EventSourcing\BinderDyn.Test.OrchardCore.EventSourcing.csproj", "{B113DDED-711E-45B1-B50E-4E69194D7512}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinderDyn.EvnetSourcing.Web", "BinderDyn.EvnetSourcing.Web\BinderDyn.EvnetSourcing.Web.csproj", "{6DA3E182-E678-4B5E-BCD3-6144A457202B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinderDyn.EventSourcing.Web", "BinderDyn.EventSourcing.Web\BinderDyn.EventSourcing.Web.csproj", "{6DA3E182-E678-4B5E-BCD3-6144A457202B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
