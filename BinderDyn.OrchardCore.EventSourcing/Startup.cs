@@ -1,6 +1,9 @@
+using BinderDyn.OrchardCore.EventSourcing.Data;
+using BinderDyn.OrchardCore.EventSourcing.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
+using OrchardCore.Data.Migration;
 using OrchardCore.Modules;
 
 namespace BinderDyn.OrchardCore.EventSourcing
@@ -9,11 +12,11 @@ namespace BinderDyn.OrchardCore.EventSourcing
     {
         public override void ConfigureServices(IServiceCollection services)
         {
-        }
-
-        public override void Configure(IApplicationBuilder builder, IEndpointRouteBuilder routes,
-            IServiceProvider serviceProvider)
-        {
+            services.AddScoped<IEventRepository, EventRepository>();
+            services.AddScoped<IEventService, EventService>();
+            services.AddScoped<IStateGuardService, StateGuardService>();
+            services.AddScoped<IEventTableManager, EventTableManager>();
+            services.AddScoped<IDataMigration, Migrations>();
         }
     }
 }
