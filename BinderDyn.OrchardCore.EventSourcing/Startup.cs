@@ -14,6 +14,7 @@ namespace BinderDyn.OrchardCore.EventSourcing
         {
             services.AddScoped<IEventRepository, EventRepository>();
             services.AddScoped<IEventService, EventService>();
+            services.AddScoped<IEventTableNameService, EventTableNameService>();
             services.AddScoped<IStateGuardService, StateGuardService>();
             services.AddScoped<IEventTableManager, EventTableManager>();
             services.AddScoped<IDataMigration, Migrations>();
