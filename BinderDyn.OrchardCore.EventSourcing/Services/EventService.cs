@@ -17,7 +17,7 @@ public interface IEventService
     /// <param name="referenceId">This could be a content item id or something else for fetching all event data for one referenceId</param>
     /// <typeparam name="T">Any object type serializable to JSON</typeparam>
     /// <returns>The id of the stored event</returns>
-    Task<Guid> Add<T>(T payload, string? referenceId = null);
+    Task<Guid> Add<T>(T payload, string friendlyName, string? referenceId = null);
     /// <summary>
     /// Gets the oldest event pending from the event store
     /// </summary>
@@ -48,7 +48,7 @@ public class EventService : IEventService
         _stateGuardService = stateGuardService;
     }
 
-    public async Task<Guid> Add<T>(T payload, string? referenceId = null)
+    public async Task<Guid> Add<T>(T payload, string friendlyName, string? referenceId = null)
     {
         if (payload == null) throw new NoEventDataProvidedException();
         var eventData = new Event<T>()
@@ -56,7 +56,8 @@ public class EventService : IEventService
             Created = _clock.UtcNow,
             Payload = payload,
             EventId = _guidWrapper.NewGuid(),
-            PayloadType = typeof(T).ToString()
+            PayloadType = typeof(T).ToString(),
+            EventTypeFriendlyName = friendlyName
         };
         await _eventRepository.Add(eventData);
 
@@ -91,12 +92,22 @@ public class EventService : IEventService
 
     public async Task SetAsFailed<T>(Guid eventId)
     {
-        throw new NotImplementedException();
+        var eventData = await GetEventOrThrow<T>(eventId);
+        _stateGuardService.AssertCanSetOrThrow(eventId, eventData.EventState, EventState.Failed);
+
+        eventData.EventState = EventState.Failed;
+
+        await _eventRepository.Update(eventData);
     }
 
     public async Task SetAsAborted<T>(Guid eventId)
     {
-        throw new NotImplementedException();
+        var eventData = await GetEventOrThrow<T>(eventId);
+        _stateGuardService.AssertCanSetOrThrow(eventId, eventData.EventState, EventState.Aborted);
+
+        eventData.EventState = EventState.Aborted;
+
+        await _eventRepository.Update(eventData);
     }
 
     private async Task<Event<T>> GetEventOrThrow<T>(Guid eventId)

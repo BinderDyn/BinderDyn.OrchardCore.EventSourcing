@@ -60,7 +60,7 @@ public class EventServiceTests
             };
             string payload = "SomePayload";
 
-            var guid = await _sut.Add(payload);
+            var guid = await _sut.Add(payload, "friendlyName");
 
             _eventRepositoryMock.Verify(x => x.Add(It.Is<Event<string>>(y => 
                 y.Created == expectedEvent.Created &&
@@ -68,6 +68,7 @@ public class EventServiceTests
                 y.EventId == expectedEvent.EventId &&
                 y.Processed == expectedEvent.Processed &&
                 y.PayloadType == expectedEvent.PayloadType &&
+                y.EventTypeFriendlyName == "friendlyName" &&
                 y.OriginalEventId == expectedEvent.OriginalEventId &&
                 y.EventState == expectedEvent.EventState)));
             guid.Should().NotBeEmpty();
@@ -78,7 +79,7 @@ public class EventServiceTests
         {
             await Assert
                 .ThrowsAsync<NoEventDataProvidedException>(
-                    async () => await _sut.Add<string>(null));
+                    async () => await _sut.Add<string>(null, null));
         }
     }
 
@@ -173,8 +174,49 @@ public class EventServiceTests
                 y.EventState == EventState.Processed)));
         }
     }
-    
-    public class SetAsFailed : EventServiceTests {}
-    
-    public class SetAsAborted : EventServiceTests {}
+
+    public class SetAsFailed : EventServiceTests
+    {
+        [Fact]
+        public async Task SetsEventAsFailed()
+        {
+            _eventRepositoryMock.Setup(m => m.Get<string>(It.IsAny<Guid>()))
+                .ReturnsAsync(new Event<string>()
+                {
+                    Payload = "somePayload",
+                    EventState = EventState.InProcessing
+                });
+            
+            await _sut.SetAsFailed<string>(Guid.NewGuid());
+            
+            _eventRepositoryMock.Verify(x => x.Update(It.Is<Event<string>>(y => 
+                y.EventState == EventState.Failed)));
+        }
+        
+        [Fact]
+        public async Task ThrowsIfNoEventFoundForId()
+        {
+            await Assert.ThrowsAsync<EventNotFoundException>(async () => 
+                await _sut.SetAsFailed<string>(Guid.NewGuid()));
+        }
+    }
+
+    public class SetAsAborted : EventServiceTests
+    {
+        [Fact]
+        public async Task SetsEventAsAborted()
+        {
+            _eventRepositoryMock.Setup(m => m.Get<string>(It.IsAny<Guid>()))
+                .ReturnsAsync(new Event<string>()
+                {
+                    Payload = "somePayload",
+                    EventState = EventState.InProcessing
+                });
+            
+            await _sut.SetAsAborted<string>(Guid.NewGuid());
+            
+            _eventRepositoryMock.Verify(x => x.Update(It.Is<Event<string>>(y => 
+                y.EventState == EventState.Aborted)));
+        }
+    }
 }

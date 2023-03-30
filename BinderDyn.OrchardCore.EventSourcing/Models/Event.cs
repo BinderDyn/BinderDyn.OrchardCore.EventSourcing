@@ -9,6 +9,7 @@ public class Event<T>
     public string? ReferenceId { get; set; }
     public T Payload { get; set; }
     public string PayloadType { get; set; }
+    public string EventTypeFriendlyName { get; set; }
     public DateTime Created { get; set; }
     public DateTime? Processed { get; set; }
     public EventState EventState { get; set; }
