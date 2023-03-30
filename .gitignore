@@ -3,3 +3,6 @@ obj/
 /packages/
 riderModule.iml
 /_ReSharper.Caches/
+/BinderDyn.EventSourcing.Web/App_Data/**
+/BinderDyn.EventSourcing.Web/Localization/**
+/BinderDyn.EventSourcing.Web/DS_Store
