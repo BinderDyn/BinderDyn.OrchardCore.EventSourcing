@@ -6,3 +6,8 @@ riderModule.iml
 /BinderDyn.EventSourcing.Web/App_Data/**
 /BinderDyn.EventSourcing.Web/Localization/**
 /BinderDyn.EventSourcing.Web/DS_Store
+*.user
+BinderDyn.OrchardCore.EventSourcing.sln.DotSettings.user
+BinderDyn.EventSourcing.Web/.DS_Store
+.DS_Store
+BinderDyn.OrchardCore.EventSourcing.sln.DotSettings.user
