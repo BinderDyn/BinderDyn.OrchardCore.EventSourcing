@@ -1,12 +1,13 @@
 using BinderDyn.OrchardCore.EventSourcing.Enums;
 using BinderDyn.OrchardCore.EventSourcing.Models;
+using BinderDyn.OrchardCore.EventSourcing.Services;
+using YesSql;
 
 namespace BinderDyn.OrchardCore.EventSourcing.Data;
 
 public interface IEventRepository
 {
-    Task Add<T>(Event<T> eventData);
-    Task Add<T>(IEnumerable<Event<T>> events);
+    Task Add<T>(Event<T>? eventData);
     Task Update<T>(Event<T> newEventData);
     Task<Event<T>> Get<T>(Guid eventId);
     Task<Event<T>> GetNextPending<T>(string? referenceId = null);
@@ -15,14 +16,23 @@ public interface IEventRepository
 
 public class EventRepository : IEventRepository
 {
-    public async Task Add<T>(Event<T> eventData)
+    private readonly ISession _session;
+    private readonly IEventTableNameService _eventTableNameService;
+
+    public EventRepository(ISession session, 
+        IEventTableNameService eventTableNameService)
     {
-        throw new NotImplementedException();
+        _session = session;
+        _eventTableNameService = eventTableNameService;
     }
 
-    public async Task Add<T>(IEnumerable<Event<T>> events)
+    public async Task Add<T>(Event<T>? eventData)
     {
-        throw new NotImplementedException();
+        if (eventData == null) return;
+        var tableName = _eventTableNameService.CreateTableNameWithPrefixOrWithout();
+        
+        _session.Save(eventData, tableName);
+        await _session.SaveChangesAsync();
     }
 
     public async Task Update<T>(Event<T> newEventData)

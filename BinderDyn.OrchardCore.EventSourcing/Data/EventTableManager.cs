@@ -1,3 +1,4 @@
+using BinderDyn.OrchardCore.EventSourcing.Services;
 using OrchardCore.Environment.Shell;
 using OrchardCore.Environment.Shell.Configuration;
 using YesSql;
@@ -11,26 +12,21 @@ public interface IEventTableManager
 
 public class EventTableManager : IEventTableManager
 {
-    private const string EventTableName = "EventTable";
+    
     
     private readonly ISession _session;
-    private readonly IShellConfiguration _shellConfiguration;
+    private readonly IEventTableNameService _eventTableNameService;
 
-    public EventTableManager(ISession session, IShellConfiguration shellConfiguration)
+    public EventTableManager(ISession session, 
+        IEventTableNameService eventTableNameService)
     {
         _session = session;
-        _shellConfiguration = shellConfiguration;
+        _eventTableNameService = eventTableNameService;
     }
 
     public async Task CreateTableIfNotExist()
     {
-        var tablePrefix = _shellConfiguration["TablePrefix"];
-        string tableName = EventTableName;
-        if (!string.IsNullOrEmpty(tablePrefix))
-        {
-            tableName = $"{tablePrefix}_{EventTableName}";    
-        }
-        
+        var tableName = _eventTableNameService.CreateTableNameWithPrefixOrWithout();
         await _session.Store.InitializeCollectionAsync(tableName);
     }
 }

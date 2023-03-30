@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using BinderDyn.OrchardCore.EventSourcing.Data;
+using BinderDyn.OrchardCore.EventSourcing.Services;
 using Moq;
 using OrchardCore.Environment.Shell.Configuration;
 using Xunit;
@@ -11,7 +12,7 @@ public class EventTableManagerTests
 {
     private readonly Mock<ISession> _sessionMock;
     private readonly Mock<IStore> _storeMock;
-    private readonly Mock<IShellConfiguration> _shellConfigurationMock;
+    private readonly Mock<IEventTableNameService> _eventTableNameServiceMock;
 
     private readonly EventTableManager _sut;
 
@@ -19,13 +20,13 @@ public class EventTableManagerTests
     {
         _sessionMock = new Mock<ISession>();
         _storeMock = new Mock<IStore>();
-        _shellConfigurationMock = new Mock<IShellConfiguration>();
+        _eventTableNameServiceMock = new Mock<IEventTableNameService>();
 
         _sessionMock.SetupGet(m => m.Store).Returns(_storeMock.Object);
-        _shellConfigurationMock.SetupGet(m => m["TablePrefix"])
-            .Returns("prefix");
+        _eventTableNameServiceMock.Setup(m => m.CreateTableNameWithPrefixOrWithout())
+            .Returns("prefix_EventTable");
 
-        _sut = new EventTableManager(_sessionMock.Object, _shellConfigurationMock.Object);
+        _sut = new EventTableManager(_sessionMock.Object, _eventTableNameServiceMock.Object);
     }
 
     public class CreateTableIfNotExist : EventTableManagerTests
@@ -41,8 +42,8 @@ public class EventTableManagerTests
         [Fact]
         public async Task ShouldCreateTableWithoutPrefix()
         {
-            _shellConfigurationMock.SetupGet(m => m["TablePrefix"])
-                .Returns(string.Empty);
+            _eventTableNameServiceMock.Setup(m => m.CreateTableNameWithPrefixOrWithout())
+                .Returns("EventTable");
 
             await _sut.CreateTableIfNotExist();
             
