@@ -42,16 +42,19 @@ public class EventRepository : IEventRepository
 
     public async Task<Event<T>> Get<T>(Guid eventId)
     {
+        // TODO: Requires index
         throw new NotImplementedException();
     }
 
     public async Task<Event<T>> GetNextPending<T>(string? referenceId = null)
     {
+        // TODO: Requires index
         throw new NotImplementedException();
     }
 
     public async Task<IEnumerable<Event<T>>> GetByState<T>(params EventState[] states)
     {
+        // TODO: Requires index
         throw new NotImplementedException();
     }
 }
