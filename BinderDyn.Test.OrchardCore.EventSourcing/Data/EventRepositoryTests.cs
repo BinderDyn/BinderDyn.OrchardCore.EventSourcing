@@ -44,10 +44,4 @@ public class EventRepositoryTests
             _sessionMock.VerifyNoOtherCalls();
         }
     }
-
-    public class Update : EventRepositoryTests
-    {
-        [Fact]
-        public async Task Updates
-    }
 }

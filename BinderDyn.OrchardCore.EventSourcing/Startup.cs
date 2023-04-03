@@ -1,8 +1,10 @@
 using BinderDyn.OrchardCore.EventSourcing.Data;
+using BinderDyn.OrchardCore.EventSourcing.Indices;
 using BinderDyn.OrchardCore.EventSourcing.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
+using OrchardCore.Data;
 using OrchardCore.Data.Migration;
 using OrchardCore.Modules;
 
@@ -18,6 +20,7 @@ namespace BinderDyn.OrchardCore.EventSourcing
             services.AddScoped<IStateGuardService, StateGuardService>();
             services.AddScoped<IEventTableManager, EventTableManager>();
             services.AddScoped<IDataMigration, Migrations>();
+            services.AddScoped<IScopedIndexProvider, EventIndexProvider>();
         }
     }
 }
