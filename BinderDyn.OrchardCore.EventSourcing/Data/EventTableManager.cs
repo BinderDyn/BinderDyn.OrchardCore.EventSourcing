@@ -28,5 +28,6 @@ public class EventTableManager : IEventTableManager
     {
         var tableName = _eventTableNameService.CreateTableNameWithPrefixOrWithout();
         await _session.Store.InitializeCollectionAsync(tableName);
+        await _session.Store.InitializeAsync();
     }
 }

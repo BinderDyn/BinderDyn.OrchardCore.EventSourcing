@@ -24,6 +24,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\BinderDyn.EventSourcing.Example\BinderDyn.EventSourcing.Example.csproj" />
       <ProjectReference Include="..\BinderDyn.OrchardCore.EventSourcing\BinderDyn.OrchardCore.EventSourcing.csproj" />
     </ItemGroup>
 

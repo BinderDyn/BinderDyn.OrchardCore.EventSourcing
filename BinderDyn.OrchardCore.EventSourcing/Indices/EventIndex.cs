@@ -28,6 +28,16 @@ public class EventIndex : MapIndex
             .Column<DateTime?>(nameof(Processed))
             .Column<string>(nameof(PayloadType)), 
             eventTableNameService.CreateTableNameWithPrefixOrWithout());
+
+        schemaBuilder.AlterIndexTable<EventIndex>(table => table
+            .CreateIndex("IDX_EventIndex_Document", 
+                nameof(EventId),
+                nameof(OriginalEventId),
+                nameof(ReferenceId),
+                nameof(EventState),
+                nameof(Created),
+                nameof(Processed),
+                nameof(PayloadType)), eventTableNameService.CreateTableNameWithPrefixOrWithout());
     }
 }
 
