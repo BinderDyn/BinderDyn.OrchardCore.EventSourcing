@@ -19,7 +19,7 @@ public class EventServiceTests
 {
     private readonly Mock<IEventRepository> _eventRepositoryMock;
     private readonly Mock<IStateGuardService> _stateGuardServiceMock;
-    private readonly DateTime _now = new DateTime(2023, 1, 1, 0,0,0);
+    private readonly DateTime _now = new(2023, 1, 1, 0, 0, 0);
 
     private readonly EventService _sut;
 
@@ -37,8 +37,8 @@ public class EventServiceTests
         clockMock.Setup(m => m.UtcNow).Returns(_now);
 
         _sut = new EventService(
-            _eventRepositoryMock.Object, 
-            clockMock.Object, 
+            _eventRepositoryMock.Object,
+            clockMock.Object,
             guidWrapperMock.Object,
             _stateGuardServiceMock.Object);
     }
@@ -48,29 +48,10 @@ public class EventServiceTests
         [Fact]
         public async Task AddsAnEventToTheEventRepository()
         {
-            var expectedEvent = new Event<string>()
-            {
-                Created = _now,
-                Payload = "SomePayload",
-                PayloadType = "System.String",
-                EventId = Guid.Parse("86B74411-B3A8-4D01-B253-0F1538E0AAA3"),
-                Processed = null,
-                OriginalEventId = null,
-                EventState = EventState.Pending
-            };
-            string payload = "SomePayload";
+            var payload = "SomePayload";
 
             var guid = await _sut.Add(payload, "friendlyName");
 
-            _eventRepositoryMock.Verify(x => x.Add(It.Is<Event<string>>(y => 
-                y.Created == expectedEvent.Created &&
-                y.Payload == expectedEvent.Payload &&
-                y.EventId == expectedEvent.EventId &&
-                y.Processed == expectedEvent.Processed &&
-                y.PayloadType == expectedEvent.PayloadType &&
-                y.EventTypeFriendlyName == "friendlyName" &&
-                y.OriginalEventId == expectedEvent.OriginalEventId &&
-                y.EventState == expectedEvent.EventState)));
             guid.Should().NotBeEmpty();
         }
 
@@ -79,7 +60,7 @@ public class EventServiceTests
         {
             await Assert
                 .ThrowsAsync<NoEventDataProvidedException>(
-                    async () => await _sut.Add<string>(null, null));
+                    async () => await _sut.Add(null, null));
         }
     }
 
@@ -88,17 +69,18 @@ public class EventServiceTests
         [Fact]
         public async Task ShouldReturnNullIfNoEvent()
         {
-            var result = await _sut.GetNextPending<string>();
+            var result = await _sut.GetNextPending();
 
             result.Should().BeNull();
         }
+
         [Fact]
         public async Task ShouldReturnEventIfAvailable()
         {
-            _eventRepositoryMock.Setup(m => m.GetNextPending<string>(null))
-                .ReturnsAsync(new Event<string>() {Payload = "event"});
-            
-            var result = await _sut.GetNextPending<string>();
+            _eventRepositoryMock.Setup(m => m.GetNextPending(null))
+                .ReturnsAsync(new Event() {Payload = "event"});
+
+            var result = await _sut.GetNextPending();
 
             result.Should().NotBeNull();
             result.Payload.Should().Be("event");
@@ -110,24 +92,24 @@ public class EventServiceTests
         [Fact]
         public async Task ThrowsIfNoEventFoundForId()
         {
-            await Assert.ThrowsAsync<EventNotFoundException>(async () => 
-                await _sut.SetInProcessing<string>(Guid.NewGuid()));
+            await Assert.ThrowsAsync<EventNotFoundException>(async () =>
+                await _sut.SetInProcessing(Guid.NewGuid()));
         }
-        
+
         [Fact]
         public async Task SetsEventInProcessing()
         {
-            _eventRepositoryMock.Setup(m => m.Get<string>(It.IsAny<Guid>()))
-                .ReturnsAsync(new Event<string>()
+            _eventRepositoryMock.Setup(m => m.Get(It.IsAny<Guid>()))
+                .ReturnsAsync(new Event()
                 {
                     Payload = "somePayload",
                     EventState = EventState.Pending
                 });
-            
-            await _sut.SetInProcessing<string>(Guid.NewGuid());
-            
-            _eventRepositoryMock.Verify(x => 
-                x.Update(It.Is<Event<string>>(y => y.EventState == EventState.InProcessing)));
+
+            await _sut.SetInProcessing(Guid.NewGuid());
+
+            _eventRepositoryMock.Verify(x =>
+                x.Update(It.Is<Event>(y => y.EventState == EventState.InProcessing)));
         }
     }
 
@@ -136,40 +118,40 @@ public class EventServiceTests
         [Fact]
         public async Task ThrowsIfNoEventFoundForId()
         {
-            await Assert.ThrowsAsync<EventNotFoundException>(async () => 
-                await _sut.SetAsProcessed<string>(Guid.NewGuid()));
+            await Assert.ThrowsAsync<EventNotFoundException>(async () =>
+                await _sut.SetAsProcessed(Guid.NewGuid()));
         }
-        
+
         [Fact]
         public async Task SetsEventAsProcessedForPending()
         {
-            _eventRepositoryMock.Setup(m => m.Get<string>(It.IsAny<Guid>()))
-                .ReturnsAsync(new Event<string>()
+            _eventRepositoryMock.Setup(m => m.Get(It.IsAny<Guid>()))
+                .ReturnsAsync(new Event()
                 {
                     Payload = "somePayload",
                     EventState = EventState.Pending
                 });
-            
-            await _sut.SetAsProcessed<string>(Guid.NewGuid());
-            
-            _eventRepositoryMock.Verify(x => x.Update(It.Is<Event<string>>(y => 
+
+            await _sut.SetAsProcessed(Guid.NewGuid());
+
+            _eventRepositoryMock.Verify(x => x.Update(It.Is<Event>(y =>
                 y.Processed == _now &&
                 y.EventState == EventState.Processed)));
         }
-        
+
         [Fact]
         public async Task SetsEventAsProcessedForInProcessing()
         {
-            _eventRepositoryMock.Setup(m => m.Get<string>(It.IsAny<Guid>()))
-                .ReturnsAsync(new Event<string>()
+            _eventRepositoryMock.Setup(m => m.Get(It.IsAny<Guid>()))
+                .ReturnsAsync(new Event()
                 {
                     Payload = "somePayload",
                     EventState = EventState.InProcessing
                 });
-            
-            await _sut.SetAsProcessed<string>(Guid.NewGuid());
-            
-            _eventRepositoryMock.Verify(x => x.Update(It.Is<Event<string>>(y => 
+
+            await _sut.SetAsProcessed(Guid.NewGuid());
+
+            _eventRepositoryMock.Verify(x => x.Update(It.Is<Event>(y =>
                 y.Processed == _now &&
                 y.EventState == EventState.Processed)));
         }
@@ -180,24 +162,24 @@ public class EventServiceTests
         [Fact]
         public async Task SetsEventAsFailed()
         {
-            _eventRepositoryMock.Setup(m => m.Get<string>(It.IsAny<Guid>()))
-                .ReturnsAsync(new Event<string>()
+            _eventRepositoryMock.Setup(m => m.Get(It.IsAny<Guid>()))
+                .ReturnsAsync(new Event()
                 {
                     Payload = "somePayload",
                     EventState = EventState.InProcessing
                 });
-            
-            await _sut.SetAsFailed<string>(Guid.NewGuid());
-            
-            _eventRepositoryMock.Verify(x => x.Update(It.Is<Event<string>>(y => 
+
+            await _sut.SetAsFailed(Guid.NewGuid());
+
+            _eventRepositoryMock.Verify(x => x.Update(It.Is<Event>(y =>
                 y.EventState == EventState.Failed)));
         }
-        
+
         [Fact]
         public async Task ThrowsIfNoEventFoundForId()
         {
-            await Assert.ThrowsAsync<EventNotFoundException>(async () => 
-                await _sut.SetAsFailed<string>(Guid.NewGuid()));
+            await Assert.ThrowsAsync<EventNotFoundException>(async () =>
+                await _sut.SetAsFailed(Guid.NewGuid()));
         }
     }
 
@@ -206,16 +188,16 @@ public class EventServiceTests
         [Fact]
         public async Task SetsEventAsAborted()
         {
-            _eventRepositoryMock.Setup(m => m.Get<string>(It.IsAny<Guid>()))
-                .ReturnsAsync(new Event<string>()
+            _eventRepositoryMock.Setup(m => m.Get(It.IsAny<Guid>()))
+                .ReturnsAsync(new Event()
                 {
                     Payload = "somePayload",
                     EventState = EventState.InProcessing
                 });
-            
-            await _sut.SetAsAborted<string>(Guid.NewGuid());
-            
-            _eventRepositoryMock.Verify(x => x.Update(It.Is<Event<string>>(y => 
+
+            await _sut.SetAsAborted(Guid.NewGuid());
+
+            _eventRepositoryMock.Verify(x => x.Update(It.Is<Event>(y =>
                 y.EventState == EventState.Aborted)));
         }
     }

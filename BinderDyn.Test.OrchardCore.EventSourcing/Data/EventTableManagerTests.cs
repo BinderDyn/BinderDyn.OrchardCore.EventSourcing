@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using BinderDyn.OrchardCore.EventSourcing.Data;
 using BinderDyn.OrchardCore.EventSourcing.Services;
@@ -13,6 +14,7 @@ public class EventTableManagerTests
     private readonly Mock<ISession> _sessionMock;
     private readonly Mock<IStore> _storeMock;
     private readonly Mock<IEventTableNameService> _eventTableNameServiceMock;
+    private readonly Mock<IServiceProvider> _serviceProviderMock;
 
     private readonly EventTableManager _sut;
 
@@ -21,12 +23,13 @@ public class EventTableManagerTests
         _sessionMock = new Mock<ISession>();
         _storeMock = new Mock<IStore>();
         _eventTableNameServiceMock = new Mock<IEventTableNameService>();
+        _serviceProviderMock = new Mock<IServiceProvider>();
 
         _sessionMock.SetupGet(m => m.Store).Returns(_storeMock.Object);
         _eventTableNameServiceMock.Setup(m => m.CreateTableNameWithPrefixOrWithout())
             .Returns("prefix_EventTable");
 
-        _sut = new EventTableManager(_sessionMock.Object, _eventTableNameServiceMock.Object);
+        _sut = new EventTableManager(_sessionMock.Object, _eventTableNameServiceMock.Object, _serviceProviderMock.Object);
     }
 
     public class CreateTableIfNotExist : EventTableManagerTests

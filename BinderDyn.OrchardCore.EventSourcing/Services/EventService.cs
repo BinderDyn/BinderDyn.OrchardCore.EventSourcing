@@ -1,9 +1,9 @@
-using System.Collections;
 using BinderDyn.OrchardCore.EventSourcing.Data;
 using BinderDyn.OrchardCore.EventSourcing.Enums;
 using BinderDyn.OrchardCore.EventSourcing.Exceptions;
 using BinderDyn.OrchardCore.EventSourcing.Models;
 using BinderDyn.OrchardCore.EventSourcing.Wrapper;
+using Newtonsoft.Json;
 using OrchardCore.Modules;
 
 namespace BinderDyn.OrchardCore.EventSourcing.Services;
@@ -15,19 +15,17 @@ public interface IEventService
     /// </summary>
     /// <param name="payload"></param>
     /// <param name="referenceId">This could be a content item id or something else for fetching all event data for one referenceId</param>
-    /// <typeparam name="T">Any object type serializable to JSON</typeparam>
     /// <returns>The id of the stored event</returns>
-    Task<Guid> Add<T>(T payload, string friendlyName, string? referenceId = null);
+    Task<Guid> Add(object payload, string friendlyName, string? referenceId = null);
     /// <summary>
     /// Gets the oldest event pending from the event store
     /// </summary>
-    /// <typeparam name="T">The type of the stored payload</typeparam>
     /// <returns></returns>
-    Task<Event<T>> GetNextPending<T>(string? referenceId = null);
-    Task SetInProcessing<T>(Guid eventId);
-    Task SetAsProcessed<T>(Guid eventId);
-    Task SetAsFailed<T>(Guid eventId);
-    Task SetAsAborted<T>(Guid eventId);
+    Task<Event> GetNextPending(string? referenceId = null);
+    Task SetInProcessing(Guid eventId);
+    Task SetAsProcessed(Guid eventId);
+    Task SetAsFailed(Guid eventId);
+    Task SetAsAborted(Guid eventId);
 }
 
 public class EventService : IEventService
@@ -48,15 +46,15 @@ public class EventService : IEventService
         _stateGuardService = stateGuardService;
     }
 
-    public async Task<Guid> Add<T>(T payload, string friendlyName, string? referenceId = null)
+    public async Task<Guid> Add(object payload, string friendlyName, string? referenceId = null)
     {
         if (payload == null) throw new NoEventDataProvidedException();
-        var eventData = new Event<T>()
+        var eventData = new Event()
         {
             Created = _clock.UtcNow,
-            Payload = payload,
+            Payload = JsonConvert.ToString(payload),
             EventId = _guidWrapper.NewGuid(),
-            PayloadType = typeof(T).ToString(),
+            PayloadType = payload.GetType().ToString(),
             EventTypeFriendlyName = friendlyName
         };
         await _eventRepository.Add(eventData);
@@ -64,14 +62,14 @@ public class EventService : IEventService
         return eventData.EventId;
     }
 
-    public async Task<Event<T>> GetNextPending<T>(string? referenceId = null)
+    public async Task<Event> GetNextPending(string? referenceId = null)
     {
-        return await _eventRepository.GetNextPending<T>(referenceId);
+        return await _eventRepository.GetNextPending(referenceId);
     }
 
-    public async Task SetInProcessing<T>(Guid eventId)
+    public async Task SetInProcessing(Guid eventId)
     {
-        var eventData = await GetEventOrThrow<T>(eventId);
+        var eventData = await GetEventOrThrow(eventId);
         _stateGuardService.AssertCanSetOrThrow(eventId, eventData.EventState, EventState.Processed);
 
         eventData.EventState = EventState.InProcessing;
@@ -79,9 +77,9 @@ public class EventService : IEventService
         await _eventRepository.Update(eventData);
     }
 
-    public async Task SetAsProcessed<T>(Guid eventId)
+    public async Task SetAsProcessed(Guid eventId)
     {
-        var eventData = await GetEventOrThrow<T>(eventId);
+        var eventData = await GetEventOrThrow(eventId);
         _stateGuardService.AssertCanSetOrThrow(eventId, eventData.EventState, EventState.Processed);
 
         eventData.EventState = EventState.Processed;
@@ -90,9 +88,9 @@ public class EventService : IEventService
         await _eventRepository.Update(eventData);
     }
 
-    public async Task SetAsFailed<T>(Guid eventId)
+    public async Task SetAsFailed(Guid eventId)
     {
-        var eventData = await GetEventOrThrow<T>(eventId);
+        var eventData = await GetEventOrThrow(eventId);
         _stateGuardService.AssertCanSetOrThrow(eventId, eventData.EventState, EventState.Failed);
 
         eventData.EventState = EventState.Failed;
@@ -100,9 +98,9 @@ public class EventService : IEventService
         await _eventRepository.Update(eventData);
     }
 
-    public async Task SetAsAborted<T>(Guid eventId)
+    public async Task SetAsAborted(Guid eventId)
     {
-        var eventData = await GetEventOrThrow<T>(eventId);
+        var eventData = await GetEventOrThrow(eventId);
         _stateGuardService.AssertCanSetOrThrow(eventId, eventData.EventState, EventState.Aborted);
 
         eventData.EventState = EventState.Aborted;
@@ -110,9 +108,9 @@ public class EventService : IEventService
         await _eventRepository.Update(eventData);
     }
 
-    private async Task<Event<T>> GetEventOrThrow<T>(Guid eventId)
+    private async Task<Event> GetEventOrThrow(Guid eventId)
     {
-        var eventData = await _eventRepository.Get<T>(eventId);
+        var eventData = await _eventRepository.Get(eventId);
         if (eventData == null) throw new EventNotFoundException(eventId);
         return eventData;
     }

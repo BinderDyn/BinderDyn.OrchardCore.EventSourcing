@@ -41,9 +41,16 @@ public class EventIndex : MapIndex
     }
 }
 
-public class EventIndexProvider : IndexProvider<IEvent>, IScopedIndexProvider
+public class EventIndexProvider : IndexProvider<Event>, IScopedIndexProvider
 {
-    public override void Describe(DescribeContext<IEvent> context)
+    public string CollectionName { get; set; } = "EventTable";
+
+    public Type ForType()
+    {
+        return typeof(Event);
+    }
+
+    public override void Describe(DescribeContext<Event> context)
     {
         context.For<EventIndex>().Map(ei => new EventIndex()
         {

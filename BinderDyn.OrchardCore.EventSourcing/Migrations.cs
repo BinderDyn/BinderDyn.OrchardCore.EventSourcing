@@ -19,14 +19,9 @@ public class Migrations : DataMigration
     public async Task<int> CreateAsync()
     {
         await _eventTableManager.CreateTableIfNotExist();
+        EventIndex.WithSchemaBuilder(SchemaBuilder, _eventTableNameService);
+        _eventTableManager.RegisterIndexes();
 
         return 1;
-    }
-
-    public async Task<int> UpdateAsyncFrom1()
-    {
-        EventIndex.WithSchemaBuilder(SchemaBuilder, _eventTableNameService);
-
-        return 2;
     }
 }

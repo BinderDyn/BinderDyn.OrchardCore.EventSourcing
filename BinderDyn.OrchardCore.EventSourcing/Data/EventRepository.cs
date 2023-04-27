@@ -8,38 +8,50 @@ namespace BinderDyn.OrchardCore.EventSourcing.Data;
 
 public interface IEventRepository
 {
-    Task Add<T>(Event<T>? eventData);
-    Task Update<T>(Event<T> newEventData);
-    Task<Event<T>> Get<T>(Guid eventId);
-    Task<Event<T>> GetNextPending<T>(string? referenceId = null);
-    Task<IEnumerable<Event<T>>> GetByState<T>(params EventState[] states);
+    Task Add(Event? eventData);
+    Task Update(Event newEventData);
+    Task<Event> Get(Guid eventId);
+    Task<Event> GetNextPending(string? referenceId = null);
+    Task<IEnumerable<Event>> GetByState(params EventState[] states);
 }
 
 public class EventRepository : IEventRepository
 {
     private readonly ISession _session;
     private readonly IEventTableNameService _eventTableNameService;
+    private readonly IEventTableManager _eventTableManager;
 
     public EventRepository(ISession session, 
-        IEventTableNameService eventTableNameService)
+        IEventTableNameService eventTableNameService, 
+        IEventTableManager eventTableManager)
     {
         _session = session;
         _eventTableNameService = eventTableNameService;
+        _eventTableManager = eventTableManager;
     }
 
-    public async Task Add<T>(Event<T>? eventData)
+    private async Task EnsureInitialized()
+    {
+        await _eventTableManager.CreateTableIfNotExist();
+    }
+
+    public async Task Add(Event? eventData)
     {
         if (eventData == null) return;
+
+        await EnsureInitialized();
         var tableName = _eventTableNameService.CreateTableNameWithPrefixOrWithout();
         
         _session.Save(eventData, tableName);
         await _session.SaveChangesAsync();
     }
 
-    public async Task Update<T>(Event<T> newEventData)
+    public async Task Update(Event newEventData)
     {
+        await EnsureInitialized();
+        
         var oldEvent = await _session
-            .Query<Event<T>, EventIndex>(q => q.EventId == newEventData.EventId.ToString())
+            .Query<Event, EventIndex>(q => q.EventId == newEventData.EventId.ToString())
             .FirstOrDefaultAsync();
 
         oldEvent = newEventData;
@@ -48,17 +60,21 @@ public class EventRepository : IEventRepository
         await _session.SaveChangesAsync();
     }
 
-    public async Task<Event<T>> Get<T>(Guid eventId)
+    public async Task<Event> Get(Guid eventId)
     {
+        await EnsureInitialized();
+        
         return await _session
-            .Query<Event<T>, EventIndex>(q => q.EventId == eventId.ToString(), 
+            .Query<Event, EventIndex>(q => q.EventId == eventId.ToString(), 
                 collection: _eventTableNameService.CreateTableNameWithPrefixOrWithout())
             .FirstOrDefaultAsync();
     }
 
-    public async Task<Event<T>> GetNextPending<T>(string? referenceId = null)
+    public async Task<Event> GetNextPending(string? referenceId = null)
     {
-        var query = _session.Query<Event<T>, EventIndex>(q => 
+        await EnsureInitialized();
+        
+        var query = _session.Query<Event, EventIndex>(q => 
             q.EventState == EventState.Pending, collection: _eventTableNameService.CreateTableNameWithPrefixOrWithout());
         if (!string.IsNullOrWhiteSpace(referenceId))
             query = query.Where(q => q.ReferenceId == referenceId);
@@ -66,10 +82,12 @@ public class EventRepository : IEventRepository
         return await query.OrderBy(ev => ev.Created).FirstOrDefaultAsync();
     }
 
-    public async Task<IEnumerable<Event<T>>> GetByState<T>(params EventState[] states)
+    public async Task<IEnumerable<Event>> GetByState(params EventState[] states)
     {
+        await EnsureInitialized();
+        
         return await _session
-            .Query<Event<T>, EventIndex>(q => states.Contains(q.EventState))
+            .Query<Event, EventIndex>(q => states.Contains(q.EventState))
             .ListAsync();
     }
 }

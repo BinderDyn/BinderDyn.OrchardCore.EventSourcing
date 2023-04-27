@@ -1,3 +1,4 @@
+using System.Diagnostics.Eventing.Reader;
 using BinderDyn.OrchardCore.EventSourcing.Data;
 using BinderDyn.OrchardCore.EventSourcing.Indices;
 using BinderDyn.OrchardCore.EventSourcing.Services;
@@ -21,7 +22,7 @@ namespace BinderDyn.OrchardCore.EventSourcing
             services.AddScoped<IStateGuardService, StateGuardService>();
             services.AddScoped<IEventTableManager, EventTableManager>();
             services.AddScoped<IDataMigration, Migrations>();
-            services.AddScoped<IScopedIndexProvider, EventIndexProvider>();
+            services.AddSingleton<IScopedIndexProvider, EventIndexProvider>();
             services.AddScoped<IGuidWrapper, GuidWrapper>();
         }
     }
