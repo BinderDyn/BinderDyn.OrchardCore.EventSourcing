@@ -12,30 +12,28 @@ public class StateGuardService : IStateGuardService
 {
     public void AssertCanSetOrThrow(Guid eventId, EventState currentState, EventState targetState)
     {
-        switch (targetState)
-        { 
+        switch (currentState)
+        {
             case EventState.Processed:
-                if (Constants.InvalidStatesForSettingAsProcessed.Contains(currentState)) 
-                    HandleErrorForSettingAsProcessed(eventId, currentState);
+                throw new EventAlreadyProcessedException(eventId);
+                break;
+            case EventState.Aborted:
+                throw new EventAlreadyAbortedException(eventId);
+                break;
+            case EventState.Failed:
+                if (Constants.InvalidStatesFromFailed.Contains(targetState))
+                    throw new EventAlreadyFailedException(eventId);
+                break;
+            case EventState.Pending:
+                if (Constants.InvalidStatesFromPending.Contains(targetState))
+                    throw new InvalidEventStateException(eventId, currentState);
+                break;
+            case EventState.InProcessing:
+                if (Constants.InvalidStatesFromProcessing.Contains(targetState))
+                    throw new InvalidEventStateException(eventId, currentState);
                 break;
             default:
                 throw new NotImplementedException();
-
-        }
-    }
-    
-    private void HandleErrorForSettingAsProcessed(Guid eventId, EventState curentState)
-    {
-        switch (curentState)
-        {
-            case EventState.Aborted:
-                throw new EventAlreadyAbortedExcpetion(eventId);
-            case EventState.Failed:
-                throw new EventAlreadyFailedException(eventId);
-            case EventState.Processed:
-                throw new EventAlreadyProcessedException(eventId);
-            default:
-                throw new NotImplementedException(curentState.ToString());
         }
     }
 }

@@ -4,10 +4,21 @@ namespace BinderDyn.OrchardCore.EventSourcing;
 
 public static class Constants
 {
-    public static EventState[] InvalidStatesForSettingAsProcessed = new[]
+    public static EventState[] InvalidStatesFromFailed = new[]
     {
+        EventState.Processed,
         EventState.Aborted,
-        EventState.Failed,
-        EventState.Processed
+        EventState.Pending
+    };
+
+    public static EventState[] InvalidStatesFromPending = new[]
+    {
+        EventState.Processed,
+        EventState.Failed
+    };
+
+    public static EventState[] InvalidStatesFromProcessing = new[]
+    {
+        EventState.Pending
     };
 }
