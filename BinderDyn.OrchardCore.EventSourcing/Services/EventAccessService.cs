@@ -1,3 +1,4 @@
+using BinderDyn.OrchardCore.EventSourcing.Data;
 using BinderDyn.OrchardCore.EventSourcing.Models;
 using BinderDyn.OrchardCore.EventSourcing.ViewModels;
 
@@ -11,6 +12,13 @@ public interface IEventAccessService
 
 public class EventAccessService : IEventAccessService
 {
+    private readonly IEventRepository _eventRepository;
+
+    public EventAccessService(IEventRepository eventRepository)
+    {
+        _eventRepository = eventRepository;
+    }
+
     public async Task<EventViewModel[]> GetAllFiltered(EventFilter filter)
     {
         throw new NotImplementedException();
