@@ -20,6 +20,12 @@ public class EventController : Controller
     }
 
     [HttpGet]
+    public async Task<ActionResult> List()
+    {
+        
+    }
+
+    [HttpPost]
     public async Task<ActionResult> List(EventFilter filter)
     {
         try

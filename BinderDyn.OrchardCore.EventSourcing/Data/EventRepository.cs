@@ -12,7 +12,7 @@ public interface IEventRepository
     Task Update(Event newEventData);
     Task<Event> Get(Guid eventId);
     Task<Event> GetNextPending(string? referenceId = null);
-    Task<IEnumerable<Event>> GetByState(params EventState[] states);
+    Task<IEnumerable<Event>> GetPagedByStates(int skip = 0, int take = 30, params EventState[] states);
 }
 
 public class EventRepository : IEventRepository
@@ -21,8 +21,8 @@ public class EventRepository : IEventRepository
     private readonly IEventTableNameService _eventTableNameService;
     private readonly IEventTableManager _eventTableManager;
 
-    public EventRepository(ISession session, 
-        IEventTableNameService eventTableNameService, 
+    public EventRepository(ISession session,
+        IEventTableNameService eventTableNameService,
         IEventTableManager eventTableManager)
     {
         _session = session;
@@ -41,7 +41,7 @@ public class EventRepository : IEventRepository
 
         await EnsureInitialized();
         var tableName = _eventTableNameService.CreateTableNameWithPrefixOrWithout();
-        
+
         _session.Save(eventData, tableName);
         await _session.SaveChangesAsync();
     }
@@ -49,7 +49,7 @@ public class EventRepository : IEventRepository
     public async Task Update(Event newEventData)
     {
         await EnsureInitialized();
-        
+
         var oldEvent = await _session
             .Query<Event, EventIndex>(q => q.EventId == newEventData.EventId.ToString())
             .FirstOrDefaultAsync();
@@ -63,31 +63,33 @@ public class EventRepository : IEventRepository
     public async Task<Event> Get(Guid eventId)
     {
         await EnsureInitialized();
-        
+
         return await _session
-            .Query<Event, EventIndex>(q => q.EventId == eventId.ToString(), 
-                collection: _eventTableNameService.CreateTableNameWithPrefixOrWithout())
+            .Query<Event, EventIndex>(q => q.EventId == eventId.ToString(),
+                _eventTableNameService.CreateTableNameWithPrefixOrWithout())
             .FirstOrDefaultAsync();
     }
 
     public async Task<Event> GetNextPending(string? referenceId = null)
     {
         await EnsureInitialized();
-        
-        var query = _session.Query<Event, EventIndex>(q => 
-            q.EventState == EventState.Pending, collection: _eventTableNameService.CreateTableNameWithPrefixOrWithout());
+
+        var query = _session.Query<Event, EventIndex>(q =>
+            q.EventState == EventState.Pending, _eventTableNameService.CreateTableNameWithPrefixOrWithout());
         if (!string.IsNullOrWhiteSpace(referenceId))
             query = query.Where(q => q.ReferenceId == referenceId);
 
         return await query.OrderBy(ev => ev.Created).FirstOrDefaultAsync();
     }
 
-    public async Task<IEnumerable<Event>> GetByState(params EventState[] states)
+    public async Task<IEnumerable<Event>> GetPagedByStates(int skip = 0, int take = 30, params EventState[] states)
     {
         await EnsureInitialized();
-        
+
         return await _session
             .Query<Event, EventIndex>(q => states.Contains(q.EventState))
+            .Skip(skip)
+            .Take(take)
             .ListAsync();
     }
 }
