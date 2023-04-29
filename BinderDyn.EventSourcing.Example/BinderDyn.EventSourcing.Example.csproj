@@ -8,23 +8,23 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+        <FrameworkReference Include="Microsoft.AspNetCore.App"/>
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="OrchardCore.ContentFields" Version="1.5.0" />
-        <PackageReference Include="OrchardCore.Module.Targets" Version="1.5.0" />
-        <PackageReference Include="OrchardCore.ContentManagement" Version="1.5.0" />
-        <PackageReference Include="OrchardCore.ContentTypes.Abstractions" Version="1.5.0" />
-        <PackageReference Include="OrchardCore.DisplayManagement" Version="1.5.0" />
+        <PackageReference Include="OrchardCore.ContentFields" Version="1.6.0"/>
+        <PackageReference Include="OrchardCore.Module.Targets" Version="1.6.0"/>
+        <PackageReference Include="OrchardCore.ContentManagement" Version="1.6.0"/>
+        <PackageReference Include="OrchardCore.ContentTypes.Abstractions" Version="1.6.0"/>
+        <PackageReference Include="OrchardCore.DisplayManagement" Version="1.6.0"/>
     </ItemGroup>
 
     <ItemGroup>
-      <RazorGenerate Remove="Views\Home\Index.cshtml" />
+        <RazorGenerate Remove="Views\Home\Index.cshtml"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\BinderDyn.OrchardCore.EventSourcing\BinderDyn.OrchardCore.EventSourcing.csproj" />
+        <ProjectReference Include="..\BinderDyn.OrchardCore.EventSourcing\BinderDyn.OrchardCore.EventSourcing.csproj"/>
     </ItemGroup>
 
 </Project>

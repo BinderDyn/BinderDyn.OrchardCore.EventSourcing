@@ -30,6 +30,14 @@ public class EventControllerTests
     public class List : EventControllerTests
     {
         [Fact]
+        public async Task ReturnsView()
+        {
+            var result = await _sut.Index();
+
+            result.Should().BeOfType<ViewResult>();
+        }
+
+        [Fact]
         public async Task ShouldReturnOkWithEvents()
         {
             _eventAccessServiceMock.Setup(m => m.GetAllFiltered(It.IsAny<EventFilter>()))

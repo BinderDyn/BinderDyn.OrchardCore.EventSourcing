@@ -1,0 +1,64 @@
+@using OrchardCore.Settings
+@inject ISiteService SiteService;
+
+<input hidden="hidden" id="siteName" value="@SiteService.GetSiteSettingsAsync().Result.SiteName"/>
+<input hidden="hidden" id="pageSize" value="@SiteService.GetSiteSettingsAsync().Result.PageSize"/>
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>@T["List.Table.Id"]</th>
+        <th>@T["List.Table.FriendlyName"]</th>
+        <th>@T["List.Table.PayloadType"]</th>
+        <th>@T["List.Table.Status"]</th>
+        <th>@T["List.Table.Created"]</th>
+        <th>@T["List.Table.Processed"]</th>
+    </tr>
+    <tr>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th>
+            <select id="state">
+                <option value="0">@T["List.State.Pending"]</option>
+                <option value="1">@T["List.State.InProcessing"]</option>
+                <option value="2">@T["List.State.Processed"]</option>
+                <option value="3">@T["List.State.Failed"]</option>
+                <option value="4">@T["List.State.Aborted"]</option>
+            </select>
+        </th>
+        <th></th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody id="table-body">
+
+    </tbody>
+</table>
+
+<script>
+    const fetchEvents = async () => 
+    {
+        const siteName = document.getElementById("siteName").value; 
+        const result = await fetch(`/${siteName}/Admin/BinderDyn.OrchardCore.EventSourcing/Event/List`, {
+            method: 'POST',
+            body: JSON.stringify({
+                state: Number.parseInt(document.getElementById("state").value ?? 0),
+                take: Number.parseInt(document.getElementById("pageSize").value),
+                skip: 0
+            })
+        });
+        
+        const resultAsJson = await result.json();
+        
+        for (const event in resultAsJson) {
+            const element = document.createElement("p");
+            element.innerText = "HALLO";
+        
+            document.getElementById("table-body").append(element)
+        }
+    };
+    
+    const reset = () => {};
+    
+    fetchEvents({});
+</script>

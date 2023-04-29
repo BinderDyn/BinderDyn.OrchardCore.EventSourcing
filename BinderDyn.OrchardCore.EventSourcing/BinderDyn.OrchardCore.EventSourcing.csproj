@@ -12,13 +12,17 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="OrchardCore.Data.YesSql.Abstractions" Version="1.5.0" />
-        <PackageReference Include="OrchardCore.Module.Targets" Version="1.5.0" />
-        <PackageReference Include="YesSql.Abstractions" Version="3.2.0" />
+        <PackageReference Include="OrchardCore.Admin.Abstractions" Version="1.6.0" />
+        <PackageReference Include="OrchardCore.Data.YesSql.Abstractions" Version="1.6.0" />
+        <PackageReference Include="OrchardCore.DisplayManagement" Version="1.6.0" />
+        <PackageReference Include="OrchardCore.Module.Targets" Version="1.6.0" />
+        <PackageReference Include="OrchardCore.Navigation.Core" Version="1.6.0" />
+        <PackageReference Include="YesSql.Abstractions" Version="3.3.0" />
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Views" />
+      <Content Include="Views\NavigationItemText-events.Id.cshtml" />
+      <Content Include="Views\_ViewImports.cshtml" />
     </ItemGroup>
 
 </Project>

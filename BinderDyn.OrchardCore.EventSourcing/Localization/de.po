@@ -1,0 +1,32 @@
+msgid "List.Table.Id"
+msgstr "Id"
+
+msgid "List.Table.FriendlyName"
+msgstr "Name"
+
+msgid "List.Table.PayloadType"
+msgstr "Typ"
+
+msgid "List.Table.Status"
+msgstr "Status"
+
+msgid "List.Table.Created"
+msgstr "Angelegt"
+
+msgid "List.Table.Processed"
+msgstr "Verarbeitet"
+
+msgid "List.State.Pending"
+msgstr "Ausstehend"
+
+msgid "List.State.InProcessing"
+msgstr "In Verarbeitung"
+
+msgid "List.State.Processed"
+msgstr "Verarbeitet"
+
+msgid "List.State.Failed"
+msgstr "Fehlgeschlagen"
+
+msgid "List.State.Aborted"
+msgstr "Abgebrochen"
