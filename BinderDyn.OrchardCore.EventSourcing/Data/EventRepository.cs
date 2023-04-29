@@ -3,6 +3,7 @@ using BinderDyn.OrchardCore.EventSourcing.Indices;
 using BinderDyn.OrchardCore.EventSourcing.Models;
 using BinderDyn.OrchardCore.EventSourcing.Services;
 using YesSql;
+using YesSql.Services;
 
 namespace BinderDyn.OrchardCore.EventSourcing.Data;
 
@@ -51,7 +52,8 @@ public class EventRepository : IEventRepository
         await EnsureInitialized();
 
         var oldEvent = await _session
-            .Query<Event, EventIndex>(q => q.EventId == newEventData.EventId.ToString())
+            .Query<Event, EventIndex>(q => q.EventId == newEventData.EventId.ToString(),
+                _eventTableNameService.CreateTableNameWithPrefixOrWithout())
             .FirstOrDefaultAsync();
 
         oldEvent = newEventData;
@@ -87,7 +89,8 @@ public class EventRepository : IEventRepository
         await EnsureInitialized();
 
         return await _session
-            .Query<Event, EventIndex>(q => states.Contains(q.EventState))
+            .Query<Event, EventIndex>(q => q.EventState.IsIn(states),
+                _eventTableNameService.CreateTableNameWithPrefixOrWithout())
             .Skip(skip)
             .Take(take)
             .ListAsync();

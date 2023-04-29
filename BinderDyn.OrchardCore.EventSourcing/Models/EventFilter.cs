@@ -1,10 +1,11 @@
 using BinderDyn.OrchardCore.EventSourcing.Enums;
+using Newtonsoft.Json;
 
 namespace BinderDyn.OrchardCore.EventSourcing.Models;
 
 public class EventFilter
 {
-    public EventState[] States { get; set; }
-    public int Skip { get; set; } = 0;
-    public int Take { get; set; } = 30;
+    [JsonProperty("states")] public EventState[] States { get; set; } = new[] {EventState.Pending};
+    [JsonProperty("skip")] public int Skip { get; set; } = 0;
+    [JsonProperty("take")] public int Take { get; set; } = 30;
 }
