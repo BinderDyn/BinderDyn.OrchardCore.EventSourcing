@@ -1,9 +1,21 @@
 @using OrchardCore.Settings
 @inject ISiteService SiteService;
 
+<head>
+    <style>
+        .paging {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+    </style>
+</head>
+
 <input hidden="hidden" id="siteName" value="@SiteService.GetSiteSettingsAsync().Result.SiteName"/>
 <input hidden="hidden" id="pageSize" value="@SiteService.GetSiteSettingsAsync().Result.PageSize"/>
-<table class="table table-striped">
+<input hidden="hidden" id="skip" value="0"/>
+<table class="table table-striped" id="event-table">
     <thead>
     <tr>
         <th>@T["List.Table.Id"]</th>
@@ -34,18 +46,33 @@
 
     </tbody>
 </table>
+<div class="paging">
+    <button type="button" onclick="pageBack()"><</button>
+    <div id="page-display">1</div>
+    <button type="button" onclick="pageForward()">></button>
+</div>
+
 
 <script>
+    const noop = () => {};
+
+    const pageSize = document.getElementById("pageSize");
+    let skip = document.getElementById("skip");
+    let page = 1;
+    let pageDisplay = document.getElementById("page-display");
+
+    
     const fetchEvents = async () => 
     {
     // TODO: Make dynamic from input
-        const states = ["Pending", "Failed"];
+        const state = Number.parseInt(document.getElementById("state").value);
         const siteName = document.getElementById("siteName").value.toLowerCase(); 
         const result = await fetch(`/${siteName}/api/events/list?` + new URLSearchParams({
             take: Number.parseInt(document.getElementById("pageSize").value),
-            skip: 0
-        }) + "&" + states.map(s => new URLSearchParams({ states: s }) + "&")
-        , {
+            skip: Number.parseInt(skip.value),
+            state: state
+        }),
+        {
              headers: {
                   "Content-Type": "application/json; charset=utf-8",
                 }
@@ -53,15 +80,65 @@
         
         const resultAsJson = await result.json();
         
-        for (const event in resultAsJson) {
-            const element = document.createElement("p");
-            element.innerText = "HALLO";
+        const tableBody = document.getElementById("table-body"); 
+        const newTableBody = document.createElement("tbody");
+        newTableBody.id = "table-body";
+        tableBody.parentNode.replaceChild(newTableBody, tableBody);
         
-            document.getElementById("table-body").append(element)
+        for (const event of resultAsJson) {
+            const row = document.createElement("tr");
+            
+            const id = document.createElement("td");
+            id.innerText = event.eventId;
+            
+            const name = document.createElement("td");
+            name.innerText = event.friendlyName;
+            
+            const type = document.createElement("td");
+            type.innerText = event.payloadType;
+            
+            const status = document.createElement("td");
+            status.innerText = event.status;
+            
+            const created = document.createElement("td");
+            created.innerText = event.created;
+            
+            const processed = document.createElement("td");
+            processed.innerText = event.processed;
+            
+            row.append(id,  name,  type,  status,  created, processed);
+            
+        
+            newTableBody.append(row);
         }
     };
     
-    const reset = () => {};
+    const reset = () => {
+        document.getElementById("state").value = "0";
+        skip.value = 0;
+    };
     
     fetchEvents({});
+    
+    setInterval(() => fetchEvents(), 5000);
+
+const pageBack = () => {
+        if (page === 1) return;
+        page -= 1;
+        pageDisplay.innerText = page;
+        
+        skip.value = Number.parseInt(skip.value) - Number.parseInt(pageSize.value);
+        
+        fetchEvents();
+    }
+    const pageForward = () => {
+            page += 1;
+            pageDisplay.innerText = page;
+            
+            skip.value = Number.parseInt(skip.value) + Number.parseInt(pageSize.value);
+            
+            fetchEvents();
+    }
+
+
 </script>

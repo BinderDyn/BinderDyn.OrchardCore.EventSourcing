@@ -23,14 +23,14 @@ public class EventApiController : ControllerBase
     }
 
     [HttpGet("list")]
-    public async Task<EventViewModel[]> List(int skip, int take, [FromQuery] params EventState[] states)
+    public async Task<EventViewModel[]> List(int skip, int take, EventState states)
     {
         try
         {
             return await _eventAccessService.GetAllFiltered(new EventFilter()
             {
                 Skip = skip,
-                States = states,
+                States = new[] {states},
                 Take = take
             });
         }
