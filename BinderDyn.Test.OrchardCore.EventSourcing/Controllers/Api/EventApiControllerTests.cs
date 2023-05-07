@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using BinderDyn.OrchardCore.EventSourcing.Controllers;
 using BinderDyn.OrchardCore.EventSourcing.Controllers.Api;
+using BinderDyn.OrchardCore.EventSourcing.Enums;
 using BinderDyn.OrchardCore.EventSourcing.Models;
 using BinderDyn.OrchardCore.EventSourcing.Services;
 using BinderDyn.OrchardCore.EventSourcing.ViewModels;
@@ -24,10 +25,10 @@ public class EventApiControllerTests
     {
         _eventAccessServiceMock = new Mock<IEventAccessService>();
         _loggerMock = new Mock<ILogger<EventController>>();
-        
+
         _sut = new EventApiController(_eventAccessServiceMock.Object, _loggerMock.Object);
     }
-    
+
     public class List : EventApiControllerTests
     {
         [Fact]
@@ -42,7 +43,7 @@ public class EventApiControllerTests
                     new EventViewModel()
                 });
 
-            var result = await _sut.List(It.IsAny<EventFilter>());
+            var result = await _sut.List(0, 0, EventState.Pending);
 
             result.Length.Should().Be(4);
         }
@@ -53,7 +54,7 @@ public class EventApiControllerTests
             _eventAccessServiceMock.Setup(m => m.GetAllFiltered(It.IsAny<EventFilter>()))
                 .ThrowsAsync(new Exception("boom"));
 
-            var result = await _sut.List(It.IsAny<EventFilter>());
+            var result = await _sut.List(0, 0, EventState.Pending);
 
             result.Length.Should().Be(0);
         }
