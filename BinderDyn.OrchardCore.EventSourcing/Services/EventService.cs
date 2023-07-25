@@ -51,7 +51,7 @@ public class EventService : IEventService
         if (payload == null) throw new NoEventDataProvidedException();
         var eventData = new Event()
         {
-            Created = _clock.UtcNow,
+            CreatedUtc = _clock.UtcNow,
             Payload = JsonConvert.ToString(payload),
             EventId = _guidWrapper.NewGuid(),
             PayloadType = payload.GetType().ToString(),
@@ -83,7 +83,7 @@ public class EventService : IEventService
         _stateGuardService.AssertCanSetOrThrow(eventId, eventData.EventState, EventState.Processed);
 
         eventData.EventState = EventState.Processed;
-        eventData.Processed = _clock.UtcNow;
+        eventData.ProcessedUtc = _clock.UtcNow;
 
         await _eventRepository.Update(eventData);
     }

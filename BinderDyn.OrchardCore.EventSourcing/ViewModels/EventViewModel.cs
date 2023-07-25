@@ -13,8 +13,8 @@ public class EventViewModel
     {
         EventId = eventData.EventId;
         FriendlyName = eventData.EventTypeFriendlyName;
-        Processed = eventData.Processed;
-        Created = eventData.Created;
+        Processed = eventData.ProcessedUtc;
+        Created = eventData.CreatedUtc;
         PayloadType = eventData.PayloadType;
         ReferenceId = eventData.ReferenceId;
         EventState = eventData.EventState;

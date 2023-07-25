@@ -1,9 +1,11 @@
+using System.Data.Common;
 using BinderDyn.OrchardCore.EventSourcing.Enums;
-using BinderDyn.OrchardCore.EventSourcing.Indices;
 using BinderDyn.OrchardCore.EventSourcing.Models;
-using BinderDyn.OrchardCore.EventSourcing.Services;
+using Dapper;
+using OrchardCore.Data;
+using OrchardCore.Environment.Shell;
 using YesSql;
-using YesSql.Services;
+using YesSql.Commands;
 
 namespace BinderDyn.OrchardCore.EventSourcing.Data;
 
@@ -18,81 +20,84 @@ public interface IEventRepository
 
 public class EventRepository : IEventRepository
 {
-    private readonly ISession _session;
-    private readonly IEventTableNameService _eventTableNameService;
-    private readonly IEventTableManager _eventTableManager;
+    private readonly IDbConnectionAccessor _dbConnectionAccessor;
+    private readonly IStore _store;
+    private readonly string _tablePrefix;
 
-    public EventRepository(ISession session,
-        IEventTableNameService eventTableNameService,
-        IEventTableManager eventTableManager)
-    {
-        _session = session;
-        _eventTableNameService = eventTableNameService;
-        _eventTableManager = eventTableManager;
-    }
 
-    private async Task EnsureInitialized()
+    public EventRepository(IDbConnectionAccessor dbConnectionAccessor, IStore store, ShellSettings settings)
     {
-        await _eventTableManager.CreateTableIfNotExist();
+        _dbConnectionAccessor = dbConnectionAccessor;
+        _store = store;
+        _tablePrefix = settings["TablePrefix"];
     }
 
     public async Task Add(Event? eventData)
     {
-        if (eventData == null) return;
+        var eventId = Guid.NewGuid();
+        using (var connection = _dbConnectionAccessor.CreateConnection())
+        {
+            await connection.OpenAsync();
+            var dialect = _store.Configuration.SqlDialect;
+            var customTable = dialect.QuoteForTableName($"{_tablePrefix}EventTable", _store.Configuration.Schema);
+            var dbCommand = connection.CreateCommand();
 
-        await EnsureInitialized();
-        var tableName = _eventTableNameService.CreateTableNameWithPrefixOrWithout();
 
-        _session.Save(eventData, tableName);
-        await _session.SaveChangesAsync();
+            dbCommand.AddParameter("CreatedUtc", eventData.CreatedUtc.ToString());
+            dbCommand.AddParameter("EventId", eventId.ToString());
+            dbCommand.AddParameter("OriginalEventId", eventData.OriginalEventId.ToString());
+            dbCommand.AddParameter("ReferenceId", eventData.ReferenceId);
+            dbCommand.AddParameter("Payload", eventData.Payload);
+            dbCommand.AddParameter("PayloadType", eventData.PayloadType);
+            dbCommand.AddParameter("EventTypeFriendlyName", eventData.EventTypeFriendlyName);
+            dbCommand.AddParameter("EventState", eventData.EventState.ToString());
+
+
+            var insertSql = "INSERT INTO " + customTable + @" 
+                (EventId, 
+                 CreatedUtc,
+                 OriginalEventId, 
+                 ReferenceId, 
+                 Payload,
+                 PayloadType,
+                 EventTypeFriendlyName,
+                 EventState)
+                 VALUES
+                 EventId,
+                 CreatedUtc,
+                 OriginalEventId,
+                 ReferenceId,
+                 Payload,
+                 PayloadType,
+                 EventTypeFriendlyName,
+                 EventState";
+
+            dbCommand.CommandText = insertSql;
+
+            dbCommand.ExecuteNonQuery();
+
+            // If an exception occurs the transaction is disposed and rolled back
+            connection.Close();
+        }
     }
 
-    public async Task Update(Event newEventData)
+    public Task Update(Event newEventData)
     {
-        await EnsureInitialized();
-
-        var oldEvent = await _session
-            .Query<Event, EventIndex>(q => q.EventId == newEventData.EventId.ToString(),
-                _eventTableNameService.CreateTableNameWithPrefixOrWithout())
-            .FirstOrDefaultAsync();
-
-        oldEvent = newEventData;
-        _session.Save(oldEvent, _eventTableNameService.CreateTableNameWithPrefixOrWithout());
-
-        await _session.SaveChangesAsync();
+        throw new NotImplementedException();
     }
 
-    public async Task<Event> Get(Guid eventId)
+    public Task<Event> Get(Guid eventId)
     {
-        await EnsureInitialized();
-
-        return await _session
-            .Query<Event, EventIndex>(q => q.EventId == eventId.ToString(),
-                _eventTableNameService.CreateTableNameWithPrefixOrWithout())
-            .FirstOrDefaultAsync();
+        throw new NotImplementedException();
     }
 
-    public async Task<Event> GetNextPending(string? referenceId = null)
+    public Task<Event> GetNextPending(string? referenceId = null)
     {
-        await EnsureInitialized();
-
-        var query = _session.Query<Event, EventIndex>(q =>
-            q.EventState == EventState.Pending, _eventTableNameService.CreateTableNameWithPrefixOrWithout());
-        if (!string.IsNullOrWhiteSpace(referenceId))
-            query = query.Where(q => q.ReferenceId == referenceId);
-
-        return await query.OrderBy(ev => ev.Created).FirstOrDefaultAsync();
+        throw new NotImplementedException();
     }
 
-    public async Task<IEnumerable<Event>> GetPagedByStates(int skip = 0, int take = 30, params EventState[] states)
+    public Task<IEnumerable<Event>> GetPagedByStates(int skip = 0, int take = 30, params EventState[] states)
     {
-        await EnsureInitialized();
-
-        return await _session
-            .Query<Event, EventIndex>(q => q.EventState.IsIn(states),
-                _eventTableNameService.CreateTableNameWithPrefixOrWithout())
-            .Skip(skip)
-            .Take(take)
-            .ListAsync();
+        throw new NotImplementedException();
     }
 }

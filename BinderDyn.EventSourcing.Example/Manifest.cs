@@ -8,5 +8,5 @@ using OrchardCore.Modules.Manifest;
     Description = "Example for implementing the event sourcing module",
     Category = "Event Sourcing",
     IsAlwaysEnabled = true,
-    Dependencies = new [] { "BinderDyn.OrchardCore.EventSourcing" }
+    Dependencies = new [] { "BinderDyn.OrchardCore.EventSourcing", "OrchardCore.Contents" }
 )]

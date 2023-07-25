@@ -135,7 +135,7 @@ public class EventServiceTests
             await _sut.SetAsProcessed(Guid.NewGuid());
 
             _eventRepositoryMock.Verify(x => x.Update(It.Is<Event>(y =>
-                y.Processed == _now &&
+                y.ProcessedUtc == _now &&
                 y.EventState == EventState.Processed)));
         }
 
@@ -152,7 +152,7 @@ public class EventServiceTests
             await _sut.SetAsProcessed(Guid.NewGuid());
 
             _eventRepositoryMock.Verify(x => x.Update(It.Is<Event>(y =>
-                y.Processed == _now &&
+                y.ProcessedUtc == _now &&
                 y.EventState == EventState.Processed)));
         }
     }
