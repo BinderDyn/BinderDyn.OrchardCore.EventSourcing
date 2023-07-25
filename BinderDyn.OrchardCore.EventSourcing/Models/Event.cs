@@ -21,8 +21,7 @@ public interface IEvent
 // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
 public class Event : IEvent
 {
-    [Key]
-    public Guid EventId { get; set; }
+    [Key] public Guid EventId { get; set; }
     public virtual Event? OriginalEvent { get; set; }
 
     [NotMapped] public Guid? OriginalEventId => OriginalEvent?.OriginalEventId;
@@ -33,4 +32,15 @@ public class Event : IEvent
     public DateTime CreatedUtc { get; set; }
     public DateTime? ProcessedUtc { get; set; }
     public EventState EventState { get; set; }
+
+    public void Update(Event newEventData)
+    {
+        ReferenceId = newEventData.ReferenceId;
+        PayloadType = newEventData.PayloadType;
+        Payload = newEventData.Payload;
+        EventTypeFriendlyName = newEventData.EventTypeFriendlyName;
+        CreatedUtc = newEventData.CreatedUtc;
+        ProcessedUtc = newEventData.ProcessedUtc;
+        EventState = newEventData.EventState;
+    }
 }

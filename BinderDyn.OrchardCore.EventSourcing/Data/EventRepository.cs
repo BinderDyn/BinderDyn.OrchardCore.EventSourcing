@@ -2,6 +2,7 @@ using System.Data.Common;
 using BinderDyn.OrchardCore.EventSourcing.Enums;
 using BinderDyn.OrchardCore.EventSourcing.Models;
 using Dapper;
+using Microsoft.EntityFrameworkCore;
 using OrchardCore.Data;
 using OrchardCore.Environment.Shell;
 using YesSql;
@@ -13,91 +14,54 @@ public interface IEventRepository
 {
     Task Add(Event? eventData);
     Task Update(Event newEventData);
-    Task<Event> Get(Guid eventId);
-    Task<Event> GetNextPending(string? referenceId = null);
+    Task<Event?> Get(Guid eventId);
+    Task<Event?> GetNextPending(string? referenceId = null);
     Task<IEnumerable<Event>> GetPagedByStates(int skip = 0, int take = 30, params EventState[] states);
 }
 
 public class EventRepository : IEventRepository
 {
-    private readonly IDbConnectionAccessor _dbConnectionAccessor;
-    private readonly IStore _store;
-    private readonly string _tablePrefix;
-
-
-    public EventRepository(IDbConnectionAccessor dbConnectionAccessor, IStore store, ShellSettings settings)
-    {
-        _dbConnectionAccessor = dbConnectionAccessor;
-        _store = store;
-        _tablePrefix = settings["TablePrefix"];
-    }
+    private readonly EventSourcingDbContext _dbContext;
 
     public async Task Add(Event? eventData)
     {
-        var eventId = Guid.NewGuid();
-        using (var connection = _dbConnectionAccessor.CreateConnection())
-        {
-            await connection.OpenAsync();
-            var dialect = _store.Configuration.SqlDialect;
-            var customTable = dialect.QuoteForTableName($"{_tablePrefix}EventTable", _store.Configuration.Schema);
-            var dbCommand = connection.CreateCommand();
+        _dbContext.Add(eventData);
 
-
-            dbCommand.AddParameter("CreatedUtc", eventData.CreatedUtc.ToString());
-            dbCommand.AddParameter("EventId", eventId.ToString());
-            dbCommand.AddParameter("OriginalEventId", eventData.OriginalEventId.ToString());
-            dbCommand.AddParameter("ReferenceId", eventData.ReferenceId);
-            dbCommand.AddParameter("Payload", eventData.Payload);
-            dbCommand.AddParameter("PayloadType", eventData.PayloadType);
-            dbCommand.AddParameter("EventTypeFriendlyName", eventData.EventTypeFriendlyName);
-            dbCommand.AddParameter("EventState", eventData.EventState.ToString());
-
-
-            var insertSql = "INSERT INTO " + customTable + @" 
-                (EventId, 
-                 CreatedUtc,
-                 OriginalEventId, 
-                 ReferenceId, 
-                 Payload,
-                 PayloadType,
-                 EventTypeFriendlyName,
-                 EventState)
-                 VALUES
-                 EventId,
-                 CreatedUtc,
-                 OriginalEventId,
-                 ReferenceId,
-                 Payload,
-                 PayloadType,
-                 EventTypeFriendlyName,
-                 EventState";
-
-            dbCommand.CommandText = insertSql;
-
-            dbCommand.ExecuteNonQuery();
-
-            // If an exception occurs the transaction is disposed and rolled back
-            connection.Close();
-        }
+        await _dbContext.SaveChangesAsync();
     }
 
-    public Task Update(Event newEventData)
+    public async Task Update(Event newEventData)
     {
-        throw new NotImplementedException();
+        var oldEvent = await _dbContext.Events.SingleAsync(x => x.EventId == newEventData.EventId);
+
+        oldEvent.Update(newEventData);
+
+        await _dbContext.SaveChangesAsync();
     }
 
-    public Task<Event> Get(Guid eventId)
+    public async Task<Event> Get(Guid eventId)
     {
-        throw new NotImplementedException();
+        return await _dbContext.Events.SingleAsync(x => x.EventId == eventId);
     }
 
-    public Task<Event> GetNextPending(string? referenceId = null)
+    public async Task<Event?> GetNextPending(string? referenceId = null)
     {
-        throw new NotImplementedException();
+        var query = _dbContext.Events
+            .Where(x => x.EventState == EventState.Pending)
+            .OrderByDescending(x => x.CreatedUtc);
+
+        if (referenceId is not null)
+            return await query.FirstOrDefaultAsync(x => x.ReferenceId == referenceId);
+
+        return await query.FirstOrDefaultAsync();
     }
 
-    public Task<IEnumerable<Event>> GetPagedByStates(int skip = 0, int take = 30, params EventState[] states)
+    public async Task<IEnumerable<Event>> GetPagedByStates(int skip = 0, int take = 30, params EventState[] states)
     {
-        throw new NotImplementedException();
+        return await _dbContext.Events
+            .Where(x => states.Contains(x.EventState))
+            .Skip(skip)
+            .Take(take)
+            .ToArrayAsync();
     }
 }
