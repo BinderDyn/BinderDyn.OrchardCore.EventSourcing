@@ -1,5 +1,6 @@
 using System.Data.Common;
 using BinderDyn.OrchardCore.EventSourcing.Enums;
+using BinderDyn.OrchardCore.EventSourcing.Exceptions;
 using BinderDyn.OrchardCore.EventSourcing.Models;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +13,7 @@ namespace BinderDyn.OrchardCore.EventSourcing.Data;
 
 public interface IEventRepository
 {
-    Task Add(Event? eventData);
+    Task<Guid> Add(Event.EventCreationParam param);
     Task Update(Event newEventData);
     Task<Event?> Get(Guid eventId);
     Task<Event?> GetNextPending(string? referenceId = null);
@@ -23,25 +24,65 @@ public class EventRepository : IEventRepository
 {
     private readonly EventSourcingDbContext _dbContext;
 
-    public async Task Add(Event? eventData)
+    public EventRepository(EventSourcingDbContext dbContext)
     {
-        _dbContext.Add(eventData);
+        _dbContext = dbContext;
+    }
+
+    public async Task<Guid> Add(Event.EventCreationParam? param)
+    {
+        if (param is null)
+            throw new ArgumentNullException(nameof(param), "Event creation param cannot be null!");
+        Event? originalEvent = default;
+        if (param.OriginalEventId.HasValue)
+        {
+            originalEvent = await _dbContext.Events.SingleOrDefaultAsync(x => x.EventId == param.OriginalEventId);
+        }
+
+        var newEvent = new Event()
+        {
+            EventState = EventState.Pending,
+            OriginalEvent = originalEvent,
+            CreatedUtc = DateTime.UtcNow,
+            ReferenceId = param.ReferenceId,
+            Payload = param.Payload,
+            EventTypeFriendlyName = param.EventTypeFriendlyName,
+            PayloadType = param.PayloadType
+        };
+
+        _dbContext.Add(newEvent);
 
         await _dbContext.SaveChangesAsync();
+
+        return newEvent.EventId;
     }
 
     public async Task Update(Event newEventData)
     {
-        var oldEvent = await _dbContext.Events.SingleAsync(x => x.EventId == newEventData.EventId);
+        try
+        {
+            var oldEvent = await _dbContext.Events.SingleAsync(x => x.EventId == newEventData.EventId);
 
-        oldEvent.Update(newEventData);
+            oldEvent.Update(newEventData);
 
-        await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
+        }
+        catch (InvalidOperationException)
+        {
+            throw new EventNotFoundException(newEventData.EventId);
+        }
     }
 
     public async Task<Event> Get(Guid eventId)
     {
-        return await _dbContext.Events.SingleAsync(x => x.EventId == eventId);
+        try
+        {
+            return await _dbContext.Events.SingleAsync(x => x.EventId == eventId);
+        }
+        catch (InvalidOperationException)
+        {
+            throw new EventNotFoundException(eventId);
+        }
     }
 
     public async Task<Event?> GetNextPending(string? referenceId = null)

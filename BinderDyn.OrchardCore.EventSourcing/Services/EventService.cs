@@ -16,12 +16,14 @@ public interface IEventService
     /// <param name="payload"></param>
     /// <param name="referenceId">This could be a content item id or something else for fetching all event data for one referenceId</param>
     /// <returns>The id of the stored event</returns>
-    Task<Guid> Add(object payload, string friendlyName, string? referenceId = null);
+    Task<Guid> Add(object payload, string friendlyName, string? referenceId = null, Guid? originalEventId = null);
+
     /// <summary>
     /// Gets the oldest event pending from the event store
     /// </summary>
     /// <returns></returns>
     Task<Event> GetNextPending(string? referenceId = null);
+
     Task SetInProcessing(Guid eventId);
     Task SetAsProcessed(Guid eventId);
     Task SetAsFailed(Guid eventId);
@@ -32,34 +34,32 @@ public class EventService : IEventService
 {
     private readonly IEventRepository _eventRepository;
     private readonly IClock _clock;
-    private readonly IGuidWrapper _guidWrapper;
     private readonly IStateGuardService _stateGuardService;
-    
-    public EventService(IEventRepository eventRepository, 
-        IClock clock, 
-        IGuidWrapper guidWrapper, 
+
+    public EventService(IEventRepository eventRepository,
+        IClock clock,
         IStateGuardService stateGuardService)
     {
         _eventRepository = eventRepository;
         _clock = clock;
-        _guidWrapper = guidWrapper;
         _stateGuardService = stateGuardService;
     }
 
-    public async Task<Guid> Add(object payload, string friendlyName, string? referenceId = null)
+    public async Task<Guid> Add(object payload, string friendlyName, string? referenceId = null,
+        Guid? originalEventId = null)
     {
         if (payload == null) throw new NoEventDataProvidedException();
-        var eventData = new Event()
+        var eventData = new Event.EventCreationParam()
         {
-            CreatedUtc = _clock.UtcNow,
             Payload = JsonConvert.ToString(payload),
-            EventId = _guidWrapper.NewGuid(),
             PayloadType = payload.GetType().ToString(),
-            EventTypeFriendlyName = friendlyName
+            EventTypeFriendlyName = friendlyName,
+            ReferenceId = referenceId,
+            OriginalEventId = originalEventId
         };
-        await _eventRepository.Add(eventData);
+        var createdEventId = await _eventRepository.Add(eventData);
 
-        return eventData.EventId;
+        return createdEventId;
     }
 
     public async Task<Event> GetNextPending(string? referenceId = null)

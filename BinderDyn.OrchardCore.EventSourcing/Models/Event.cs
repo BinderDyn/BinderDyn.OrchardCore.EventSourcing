@@ -26,9 +26,9 @@ public class Event : IEvent
 
     [NotMapped] public Guid? OriginalEventId => OriginalEvent?.OriginalEventId;
     public string? ReferenceId { get; set; }
-    public string Payload { get; set; }
-    public string PayloadType { get; set; }
-    public string EventTypeFriendlyName { get; set; }
+    public string Payload { get; set; } = string.Empty;
+    public string PayloadType { get; set; } = string.Empty;
+    public string EventTypeFriendlyName { get; set; } = string.Empty;
     public DateTime CreatedUtc { get; set; }
     public DateTime? ProcessedUtc { get; set; }
     public EventState EventState { get; set; }
@@ -40,7 +40,16 @@ public class Event : IEvent
         Payload = newEventData.Payload;
         EventTypeFriendlyName = newEventData.EventTypeFriendlyName;
         CreatedUtc = newEventData.CreatedUtc;
-        ProcessedUtc = newEventData.ProcessedUtc;
+        ProcessedUtc = DateTime.UtcNow;
         EventState = newEventData.EventState;
+    }
+
+    public class EventCreationParam
+    {
+        public virtual Guid? OriginalEventId { get; set; }
+        public string? ReferenceId { get; set; }
+        public string Payload { get; set; } = string.Empty;
+        public string PayloadType { get; set; } = string.Empty;
+        public string EventTypeFriendlyName { get; set; } = string.Empty;
     }
 }

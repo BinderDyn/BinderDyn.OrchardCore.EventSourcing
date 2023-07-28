@@ -27,19 +27,15 @@ public class EventServiceTests
     {
         _eventRepositoryMock = new Mock<IEventRepository>();
         var clockMock = new Mock<IClock>();
-        var guidWrapperMock = new Mock<IGuidWrapper>();
         _stateGuardServiceMock = new Mock<IStateGuardService>();
 
-        guidWrapperMock.SetupSequence(m => m.NewGuid())
-            .Returns(Guid.Parse("86B74411-B3A8-4D01-B253-0F1538E0AAA3"))
-            .Returns(Guid.Parse("C3C849FE-2EE5-4197-A683-B10F34F095B9"));
-
         clockMock.Setup(m => m.UtcNow).Returns(_now);
+        _eventRepositoryMock.Setup(m => m.Add(It.IsAny<Event.EventCreationParam>()))
+            .ReturnsAsync(Guid.NewGuid());
 
         _sut = new EventService(
             _eventRepositoryMock.Object,
             clockMock.Object,
-            guidWrapperMock.Object,
             _stateGuardServiceMock.Object);
     }
 
