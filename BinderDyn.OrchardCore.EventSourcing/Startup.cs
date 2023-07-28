@@ -16,9 +16,7 @@ public class Startup : StartupBase
     {
         services.AddScoped<IEventRepository, EventRepository>();
         services.AddScoped<IEventService, EventService>();
-        services.AddScoped<IEventTableNameService, EventTableNameService>();
         services.AddScoped<IStateGuardService, StateGuardService>();
-        services.AddScoped<IEventTableManager, EventTableManager>();
         services.AddScoped<IDbConnectionProvider, DbConnectionProvider>();
         services.AddScoped<IGuidWrapper, GuidWrapper>();
         services.AddScoped<INavigationProvider, AdminMenu>();
@@ -26,7 +24,7 @@ public class Startup : StartupBase
 
         services.AddDbContext<EventSourcingDbContext>();
     }
-    
+
     public override void Configure(IApplicationBuilder builder, IEndpointRouteBuilder routes,
         IServiceProvider serviceProvider)
     {
