@@ -1,6 +1,7 @@
 @model BinderDyn.OrchardCore.EventSourcing.ViewModels.EventTableViewModel
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @using OrchardCore.Modules
+@using BinderDyn.OrchardCore.EventSourcing.Enums
 @inject ILocalClock LocalClock
 
 @{
@@ -54,8 +55,41 @@
           visibility: visible;
           opacity: 1;
         }
+        
+        .state {
+            padding: 2px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            line-height: 1.5;
+            color: white !important;
+        }
+        
+        .Pending {
+            background-color: darkviolet;
+        }
+        
+        .InProcessing {
+            background-color: orange;
+        }
+                
+        .Processed {
+            background-color: green;
+        }
+        
+        .Aborted {
+            background-color: indianred;
+        }
+        
+        .Failed {
+            background-color: red;
+        }
     </style>
 </head>
+
+<h1>@T["List.Title"]</h1>
 
 <input hidden="hidden" id="baseUrl" value="@Model.BaseUrl"/>
 <input hidden="hidden" id="currentPage" value="@Model.CurrentPage"/>
@@ -76,11 +110,12 @@
         <th>
             <form id="filter" asp-action="Index" asp-route-state="@Model.State" asp-route-page="1" method="get">
                 <select id="state" asp-for="State" onchange="filterChanged()">
+                    <option value="-1">@T["List.State.All"]</option>
                     <option value="0">@T["List.State.Pending"]</option>
                     <option value="1">@T["List.State.InProcessing"]</option>
                     <option value="2">@T["List.State.Processed"]</option>
-                    <option value="3">@T["List.State.Failed"]</option>
-                    <option value="4">@T["List.State.Aborted"]</option>
+                    <option value="3">@T["List.State.Aborted"]</option>
+                    <option value="4">@T["List.State.Failed"]</option>
                 </select>
             </form>
         </th>
@@ -103,7 +138,11 @@
                     <span class="tooltiptext">@eventData.Payload</span>
                 </div>
             </td>
-            <td>@T[eventData.EventState.ToString()]</td>
+            <td>
+                <div class="state @eventData.EventState.ToString()">
+                    @T[eventData.EventState.ToString()]
+                </div>
+            </td>
             <td>@createdLocal</td>
             <td>@processedLocal</td>
         </tr>
@@ -127,7 +166,6 @@
 
 </div>
 
-
 <script>
     const pageSize = document.getElementById("pageSize");
     let skip = document.getElementById("skip");
@@ -144,4 +182,4 @@
         form.submit();
     }; 
 </script>
-<script asp-name="font-awesome" use-cdn="true"></script>
+<script asp-name="font-awesome" use-cdn="false"></script>

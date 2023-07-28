@@ -100,8 +100,17 @@ public class EventRepository : IEventRepository
 
     public async Task<IEnumerable<Event>> GetPagedByStates(int skip = 0, int take = 30, params EventState[] states)
     {
-        return await _dbContext.Events
-            .Where(x => states.Contains(x.EventState))
+        var query = _dbContext.Events.AsQueryable();
+
+        if (states.Contains(EventState.All))
+        {
+            return await query
+                .Skip(skip)
+                .Take(take)
+                .ToArrayAsync();
+        }
+
+        return await query.Where(x => states.Contains(x.EventState))
             .Skip(skip)
             .Take(take)
             .ToArrayAsync();
@@ -109,6 +118,7 @@ public class EventRepository : IEventRepository
 
     public async Task<int> GetCountOfEventsForState(EventState state)
     {
+        if (state == EventState.All) return await _dbContext.Events.CountAsync();
         return await _dbContext.Events.CountAsync(e => e.EventState == state);
     }
 }

@@ -1,3 +1,6 @@
+msgid "List.Title"
+msgstr "Events"
+
 msgid "List.Table.Id"
 msgstr "Id"
 
@@ -12,6 +15,9 @@ msgstr "Status"
 
 msgid "List.Table.Created"
 msgstr "Created"
+
+msgid "List.State.All"
+msgstr "All"
 
 msgid "List.Table.Processed"
 msgstr "Processed"

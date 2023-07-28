@@ -22,7 +22,7 @@ public class EventController : Controller
     }
 
     [HttpGet]
-    public async Task<ActionResult> Index(int page = 1, EventState state = EventState.Pending)
+    public async Task<ActionResult> Index(int page = 1, EventState state = EventState.All)
     {
         var eventCount = await _eventAccessService.GetCountOfEventsForState(state);
         var siteSettings = await _siteService.GetSiteSettingsAsync();
