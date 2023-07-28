@@ -18,6 +18,7 @@ public interface IEventRepository
     Task<Event?> Get(Guid eventId);
     Task<Event?> GetNextPending(string? referenceId = null);
     Task<IEnumerable<Event>> GetPagedByStates(int skip = 0, int take = 30, params EventState[] states);
+    Task<int> GetCountOfEventsForState(EventState state);
 }
 
 public class EventRepository : IEventRepository
@@ -104,5 +105,10 @@ public class EventRepository : IEventRepository
             .Skip(skip)
             .Take(take)
             .ToArrayAsync();
+    }
+
+    public async Task<int> GetCountOfEventsForState(EventState state)
+    {
+        return await _dbContext.Events.CountAsync(e => e.EventState == state);
     }
 }

@@ -30,3 +30,18 @@ msgstr "Failed"
 
 msgid "List.State.Aborted"
 msgstr "Aborted"
+
+msgid "Pending"
+msgstr "Pending"
+
+msgid "InProcessing"
+msgstr "In Processing"
+
+msgid "Processed"
+msgstr "Processed"
+
+msgid "Aborted"
+msgstr "Aborted"
+
+msgid "Failed"
+msgstr "Failed"

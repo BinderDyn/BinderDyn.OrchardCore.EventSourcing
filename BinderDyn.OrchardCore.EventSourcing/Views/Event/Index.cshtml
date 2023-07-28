@@ -1,5 +1,12 @@
-@using OrchardCore.Settings
-@inject ISiteService SiteService;
+@model BinderDyn.OrchardCore.EventSourcing.ViewModels.EventTableViewModel
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using OrchardCore.Modules
+@inject ILocalClock LocalClock
+
+@{
+    var nextPage = Model.CurrentPage + 1;
+    var previousPage = Model.CurrentPage - 1;
+}
 
 <head>
     <style>
@@ -9,18 +16,55 @@
             align-items: center;
             gap: 20px;
         }
+        .custom-tooltip {
+          position: relative;
+          opacity: 1 !important;
+          display: inline-block;
+        }
+        
+        .custom-tooltip .tooltiptext {
+          visibility: hidden;
+          width: 120px;
+          background-color: #555;
+          color: #fff;
+          text-align: center;
+          border-radius: 6px;
+          padding: 5px 0;
+          position: absolute;
+          z-index: 1;
+          bottom: 125%;
+          left: 50%;
+          margin-left: -60px;
+          opacity: 1 !important;
+          transition: opacity 0.3s;
+        }
+        
+        .custom-tooltip .tooltiptext::after {
+          content: "";
+          position: absolute;
+          top: 100%;
+          left: 50%;
+          margin-left: -5px;
+          border-width: 5px;
+          border-style: solid;
+          border-color: #555 transparent transparent transparent;
+        }
+        
+        .custom-tooltip:hover .tooltiptext {
+          visibility: visible;
+          opacity: 1;
+        }
     </style>
 </head>
 
-<input hidden="hidden" id="siteName" value="@SiteService.GetSiteSettingsAsync().Result.SiteName"/>
-<input hidden="hidden" id="pageSize" value="@SiteService.GetSiteSettingsAsync().Result.PageSize"/>
-<input hidden="hidden" id="skip" value="0"/>
+<input hidden="hidden" id="baseUrl" value="@Model.BaseUrl"/>
+<input hidden="hidden" id="currentPage" value="@Model.CurrentPage"/>
 <table class="table table-striped" id="event-table">
     <thead>
     <tr>
-        <th>@T["List.Table.Id"]</th>
+        <th style="min-width: 395px">@T["List.Table.Id"]</th>
         <th>@T["List.Table.FriendlyName"]</th>
-        <th>@T["List.Table.PayloadType"]</th>
+        <th style="min-width: 150px">@T["List.Table.PayloadType"]</th>
         <th>@T["List.Table.Status"]</th>
         <th>@T["List.Table.Created"]</th>
         <th>@T["List.Table.Processed"]</th>
@@ -30,115 +74,74 @@
         <th></th>
         <th></th>
         <th>
-            <select id="state">
-                <option value="0">@T["List.State.Pending"]</option>
-                <option value="1">@T["List.State.InProcessing"]</option>
-                <option value="2">@T["List.State.Processed"]</option>
-                <option value="3">@T["List.State.Failed"]</option>
-                <option value="4">@T["List.State.Aborted"]</option>
-            </select>
+            <form id="filter" asp-action="Index" asp-route-state="@Model.State" asp-route-page="1" method="get">
+                <select id="state" asp-for="State" onchange="filterChanged()">
+                    <option value="0">@T["List.State.Pending"]</option>
+                    <option value="1">@T["List.State.InProcessing"]</option>
+                    <option value="2">@T["List.State.Processed"]</option>
+                    <option value="3">@T["List.State.Failed"]</option>
+                    <option value="4">@T["List.State.Aborted"]</option>
+                </select>
+            </form>
         </th>
         <th></th>
         <th></th>
     </tr>
     </thead>
-    <tbody id="table-body">
+    <tbody>
+    @foreach (var eventData in Model.Events)
+    {
+        var createdLocal = (await LocalClock.ConvertToLocalAsync(eventData.Created)).LocalDateTime.ToString("yyyy-MM-dd HH:mm:ss");
+        var processedLocal = eventData.Processed.HasValue ? (await LocalClock.ConvertToLocalAsync(eventData.Processed.Value)).LocalDateTime.ToString("yyyy-MM-dd HH:mm:ss") : string.Empty;
 
+        <tr>
+            <td>@eventData.EventId</td>
+            <td>@eventData.FriendlyName</td>
+            <td>
+                <div class="custom-tooltip">
+                    @eventData.PayloadType
+                    <span class="tooltiptext">@eventData.Payload</span>
+                </div>
+            </td>
+            <td>@T[eventData.EventState.ToString()]</td>
+            <td>@createdLocal</td>
+            <td>@processedLocal</td>
+        </tr>
+    }
     </tbody>
 </table>
 <div class="paging">
-    <button type="button" onclick="pageBack()"><</button>
-    <div id="page-display">1</div>
-    <button type="button" onclick="pageForward()">></button>
+    @if (Model.CurrentPage > 1)
+    {
+        <a type="button" asp-action="Index" asp-route-page="@previousPage" asp-route-state="@Model.State">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+    }
+    <div id="page-display">@Model.CurrentPage / @Model.MaxPage</div>
+    @if (Model.CurrentPage < Model.MaxPage)
+    {
+        <a type="button" asp-action="Index" asp-route-page="@nextPage" asp-route-state="@Model.State">
+            <i class="fas fa-arrow-right"></i>
+        </a>
+    }
+
 </div>
 
 
 <script>
-    const noop = () => {};
-
     const pageSize = document.getElementById("pageSize");
     let skip = document.getElementById("skip");
     let page = 1;
     let pageDisplay = document.getElementById("page-display");
 
-    
-    const fetchEvents = async () => 
-    {
-    // TODO: Make dynamic from input
-        const state = Number.parseInt(document.getElementById("state").value);
-        const siteName = document.getElementById("siteName").value.toLowerCase(); 
-        const result = await fetch(`/${siteName}/api/events/list?` + new URLSearchParams({
-            take: Number.parseInt(document.getElementById("pageSize").value),
-            skip: Number.parseInt(skip.value),
-            state: state
-        }),
-        {
-             headers: {
-                  "Content-Type": "application/json; charset=utf-8",
-                }
-        });
-        
-        const resultAsJson = await result.json();
-        
-        const tableBody = document.getElementById("table-body"); 
-        const newTableBody = document.createElement("tbody");
-        newTableBody.id = "table-body";
-        tableBody.parentNode.replaceChild(newTableBody, tableBody);
-        
-        for (const event of resultAsJson) {
-            const row = document.createElement("tr");
-            
-            const id = document.createElement("td");
-            id.innerText = event.eventId;
-            
-            const name = document.createElement("td");
-            name.innerText = event.friendlyName;
-            
-            const type = document.createElement("td");
-            type.innerText = event.payloadType;
-            
-            const status = document.createElement("td");
-            status.innerText = event.status;
-            
-            const created = document.createElement("td");
-            created.innerText = event.created;
-            
-            const processed = document.createElement("td");
-            processed.innerText = event.processed;
-            
-            row.append(id,  name,  type,  status,  created, processed);
-            
-        
-            newTableBody.append(row);
-        }
-    };
-    
     const reset = () => {
         document.getElementById("state").value = "0";
         skip.value = 0;
     };
     
-    fetchEvents({});
-    
-    setInterval(() => fetchEvents(), 5000);
-
-const pageBack = () => {
-        if (page === 1) return;
-        page -= 1;
-        pageDisplay.innerText = page;
-        
-        skip.value = Number.parseInt(skip.value) - Number.parseInt(pageSize.value);
-        
-        fetchEvents();
-    }
-    const pageForward = () => {
-            page += 1;
-            pageDisplay.innerText = page;
-            
-            skip.value = Number.parseInt(skip.value) + Number.parseInt(pageSize.value);
-            
-            fetchEvents();
-    }
-
-
+    const filterChanged = async () => {
+        const form = document.getElementById("filter");
+        form.submit();
+    }; 
 </script>
+<script asp-name="font-awesome" use-cdn="true"></script>

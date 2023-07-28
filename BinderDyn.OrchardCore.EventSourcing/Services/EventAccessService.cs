@@ -10,6 +10,7 @@ public interface IEventAccessService
 {
     Task<EventViewModel[]> GetAllFiltered(EventFilter filter);
     Task RescheduleEventForPending(Guid id);
+    Task<int> GetCountOfEventsForState(EventState eventState);
 }
 
 public class EventAccessService : IEventAccessService
@@ -39,6 +40,11 @@ public class EventAccessService : IEventAccessService
             _logger.LogError(e, "Something went wrong getting all filtered events");
             throw;
         }
+    }
+
+    public async Task<int> GetCountOfEventsForState(EventState eventState)
+    {
+        return await _eventRepository.GetCountOfEventsForState(eventState);
     }
 
     public async Task RescheduleEventForPending(Guid id)

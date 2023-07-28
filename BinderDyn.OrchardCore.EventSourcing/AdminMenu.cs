@@ -14,7 +14,7 @@ public class AdminMenu : INavigationProvider
 
     public async Task BuildNavigationAsync(string name, NavigationBuilder builder)
     {
-        builder.Add(_s["Menu.EventMenuPoint"], "0",
+        builder.Add(_s["Menu.EventMenuPoint"], "99",
             builder =>
             {
                 builder.Action("Index", "Event", "BinderDyn.OrchardCore.EventSourcing");
