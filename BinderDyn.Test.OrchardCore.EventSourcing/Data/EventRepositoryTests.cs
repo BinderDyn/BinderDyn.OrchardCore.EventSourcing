@@ -6,12 +6,10 @@ using BinderDyn.OrchardCore.EventSourcing.Data;
 using BinderDyn.OrchardCore.EventSourcing.Enums;
 using BinderDyn.OrchardCore.EventSourcing.Exceptions;
 using BinderDyn.OrchardCore.EventSourcing.Models;
-using BinderDyn.OrchardCore.EventSourcing.Services;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using Moq;
+using NSubstitute;
 using Xunit;
-using YesSql;
 
 namespace BinderDyn.Test.OrchardCore.EventSourcing.Data;
 
@@ -22,7 +20,7 @@ public class EventRepositoryTests
 
     public EventRepositoryTests()
     {
-        _dbContext = new EventSourcingDbContext(new Mock<IServiceProvider>().Object, builder =>
+        _dbContext = new EventSourcingDbContext(Substitute.For<IServiceProvider>(), builder =>
             builder.UseInMemoryDatabase(Guid.NewGuid().ToString()));
 
         _sut = new EventRepository(_dbContext);
@@ -38,7 +36,7 @@ public class EventRepositoryTests
                 ReferenceId = "1",
                 Payload = "1",
                 PayloadType = "string",
-                EventTypeFriendlyName = "TestEvent",
+                EventTypeFriendlyName = "TestEvent"
             });
 
             (await _dbContext.Events.CountAsync()).Should().Be(1);
@@ -130,15 +128,13 @@ public class EventRepositoryTests
         public async Task GetsPagedByState()
         {
             var events = new List<Event>();
-            for (int i = 1; i < 31; i++)
-            {
+            for (var i = 1; i < 31; i++)
                 events.Add(new Event()
                 {
                     ReferenceId = i.ToString(),
                     EventState = i % 2 == 0 ? EventState.Processed : EventState.InProcessing,
                     Payload = i.ToString()
                 });
-            }
 
             _dbContext.AddRange(events);
             await _dbContext.SaveChangesAsync();

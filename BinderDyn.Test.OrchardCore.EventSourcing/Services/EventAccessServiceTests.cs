@@ -6,25 +6,25 @@ using BinderDyn.OrchardCore.EventSourcing.Models;
 using BinderDyn.OrchardCore.EventSourcing.Services;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
-using Moq;
+using NSubstitute;
 using Xunit;
 
 namespace BinderDyn.Test.OrchardCore.EventSourcing.Services;
 
 public class EventAccessServiceTests
 {
-    private readonly Mock<IEventRepository> _eventRepositoryMock;
-    private readonly Mock<ILogger<EventAccessService>> _loggerMock;
-    private readonly Mock<IStateGuardService> _stateGuardServiceMock;
+    private readonly IEventRepository _eventRepositoryMock;
+    private readonly ILogger<EventAccessService> _loggerMock;
+    private readonly IStateGuardService _stateGuardServiceMock;
     private readonly EventAccessService _sut;
 
     public EventAccessServiceTests()
     {
-        _eventRepositoryMock = new Mock<IEventRepository>();
-        _loggerMock = new Mock<ILogger<EventAccessService>>();
-        _stateGuardServiceMock = new Mock<IStateGuardService>();
+        _eventRepositoryMock = Substitute.For<IEventRepository>();
+        _loggerMock = Substitute.For<ILogger<EventAccessService>>();
+        _stateGuardServiceMock = Substitute.For<IStateGuardService>();
 
-        _sut = new EventAccessService(_eventRepositoryMock.Object, _loggerMock.Object, _stateGuardServiceMock.Object);
+        _sut = new EventAccessService(_eventRepositoryMock, _loggerMock, _stateGuardServiceMock);
     }
 
     public class GetAllFiltered : EventAccessServiceTests
@@ -33,8 +33,8 @@ public class EventAccessServiceTests
         public async Task ShouldReturnViewModelsFromEventsFetched()
         {
             _eventRepositoryMock
-                .Setup(m => m.GetPagedByStates(0, 5, It.IsAny<EventState[]>()))
-                .ReturnsAsync(new[]
+                .GetPagedByStates(0, 5, Arg.Any<EventState[]>())
+                .Returns(new[]
                 {
                     new Event(),
                     new Event(),
@@ -48,7 +48,7 @@ public class EventAccessServiceTests
                 States = new[] {EventState.Pending}
             });
 
-            _eventRepositoryMock.Verify(x => x.GetPagedByStates(0, 5, new[] {EventState.Pending}));
+            await _eventRepositoryMock.Received().GetPagedByStates(0, 5, new[] {EventState.Pending});
 
             result.Length.Should().Be(3);
         }
@@ -63,7 +63,7 @@ public class EventAccessServiceTests
                 States = new[] {EventState.Pending}
             });
 
-            _eventRepositoryMock.Verify(x => x.GetPagedByStates(0, 5, new[] {EventState.Pending}));
+            await _eventRepositoryMock.Received().GetPagedByStates(0, 5, new[] {EventState.Pending});
 
             result.Length.Should().Be(0);
         }
@@ -71,9 +71,9 @@ public class EventAccessServiceTests
         [Fact]
         public async Task ThrowsOnError()
         {
-            _eventRepositoryMock.Setup(m =>
-                    m.GetPagedByStates(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<EventState[]>()))
-                .ThrowsAsync(new Exception());
+            _eventRepositoryMock
+                .When(x => x.GetPagedByStates(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<EventState[]>()))
+                .Do(x => throw new Exception());
 
             await Assert.ThrowsAsync<Exception>(async () => await _sut.GetAllFiltered(new EventFilter()));
         }
@@ -85,8 +85,8 @@ public class EventAccessServiceTests
         public async Task FetchesEventAndSetsStatusToPending()
         {
             var guid = Guid.NewGuid();
-            _eventRepositoryMock.Setup(m => m.Get(guid))
-                .ReturnsAsync(new Event()
+            _eventRepositoryMock.Get(guid)
+                .Returns(new Event()
                 {
                     EventId = guid,
                     EventState = EventState.Failed
@@ -94,18 +94,20 @@ public class EventAccessServiceTests
 
             await _sut.RescheduleEventForPending(guid);
 
-            _eventRepositoryMock.Verify(x => x.Get(guid));
-            _stateGuardServiceMock.Verify(x => x.AssertCanSetOrThrow(guid, EventState.Failed, EventState.Pending));
-            _eventRepositoryMock.Verify(x => x.Update(It.Is<Event>(
+            await _eventRepositoryMock.Received().Get(guid);
+            _stateGuardServiceMock.Received().AssertCanSetOrThrow(guid, EventState.Failed, EventState.Pending);
+            await _eventRepositoryMock.Received().Update(Arg.Is<Event>(
                 y => y.EventId == guid && y.EventState == EventState.Pending
-            )));
+            ));
         }
 
         [Fact]
         public async Task ThrowsOnError()
         {
-            _eventRepositoryMock.Setup(m => m.Get(It.IsAny<Guid>()))
-                .ThrowsAsync(new Exception());
+            _eventRepositoryMock
+                .When(x =>
+                    x.Get(Arg.Any<Guid>()))
+                .Do(x => throw new Exception());
 
             await Assert.ThrowsAsync<Exception>(async () => await _sut.RescheduleEventForPending(Guid.NewGuid()));
         }

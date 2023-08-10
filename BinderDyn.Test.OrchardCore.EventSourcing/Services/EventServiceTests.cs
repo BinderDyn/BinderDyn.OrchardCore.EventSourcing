@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using BinderDyn.OrchardCore.EventSourcing.Data;
 using BinderDyn.OrchardCore.EventSourcing.Enums;
 using BinderDyn.OrchardCore.EventSourcing.Exceptions;
 using BinderDyn.OrchardCore.EventSourcing.Models;
 using BinderDyn.OrchardCore.EventSourcing.Services;
-using BinderDyn.OrchardCore.EventSourcing.Wrapper;
 using FluentAssertions;
-using Moq;
+using NSubstitute;
 using OrchardCore.Modules;
 using Xunit;
 
@@ -17,26 +14,26 @@ namespace BinderDyn.Test.OrchardCore.EventSourcing.Services;
 
 public class EventServiceTests
 {
-    private readonly Mock<IEventRepository> _eventRepositoryMock;
-    private readonly Mock<IStateGuardService> _stateGuardServiceMock;
+    private readonly IEventRepository _eventRepositoryMock;
+    private readonly IStateGuardService _stateGuardServiceMock;
     private readonly DateTime _now = new(2023, 1, 1, 0, 0, 0);
 
     private readonly EventService _sut;
 
     protected EventServiceTests()
     {
-        _eventRepositoryMock = new Mock<IEventRepository>();
-        var clockMock = new Mock<IClock>();
-        _stateGuardServiceMock = new Mock<IStateGuardService>();
+        _eventRepositoryMock = Substitute.For<IEventRepository>();
+        var clockMock = Substitute.For<IClock>();
+        _stateGuardServiceMock = Substitute.For<IStateGuardService>();
 
-        clockMock.Setup(m => m.UtcNow).Returns(_now);
-        _eventRepositoryMock.Setup(m => m.Add(It.IsAny<Event.EventCreationParam>()))
-            .ReturnsAsync(Guid.NewGuid());
+        clockMock.UtcNow.Returns(_now);
+        _eventRepositoryMock.Add(Arg.Any<Event.EventCreationParam>())
+            .ReturnsForAnyArgs(Guid.NewGuid());
 
         _sut = new EventService(
-            _eventRepositoryMock.Object,
-            clockMock.Object,
-            _stateGuardServiceMock.Object);
+            _eventRepositoryMock,
+            clockMock,
+            _stateGuardServiceMock);
     }
 
     public class Add : EventServiceTests
@@ -73,8 +70,8 @@ public class EventServiceTests
         [Fact]
         public async Task ShouldReturnEventIfAvailable()
         {
-            _eventRepositoryMock.Setup(m => m.GetNextPending(null))
-                .ReturnsAsync(new Event() {Payload = "event"});
+            _eventRepositoryMock.GetNextPending(null)
+                .ReturnsForAnyArgs(new Event() {Payload = "event"});
 
             var result = await _sut.GetNextPending();
 
@@ -95,8 +92,8 @@ public class EventServiceTests
         [Fact]
         public async Task SetsEventInProcessing()
         {
-            _eventRepositoryMock.Setup(m => m.Get(It.IsAny<Guid>()))
-                .ReturnsAsync(new Event()
+            _eventRepositoryMock.Get(Arg.Any<Guid>())
+                .Returns(new Event()
                 {
                     Payload = "somePayload",
                     EventState = EventState.Pending
@@ -104,8 +101,7 @@ public class EventServiceTests
 
             await _sut.SetInProcessing(Guid.NewGuid());
 
-            _eventRepositoryMock.Verify(x =>
-                x.Update(It.Is<Event>(y => y.EventState == EventState.InProcessing)));
+            await _eventRepositoryMock.Received().Update(Arg.Is<Event>(x => x.EventState == EventState.InProcessing));
         }
     }
 
@@ -121,8 +117,8 @@ public class EventServiceTests
         [Fact]
         public async Task SetsEventAsProcessedForPending()
         {
-            _eventRepositoryMock.Setup(m => m.Get(It.IsAny<Guid>()))
-                .ReturnsAsync(new Event()
+            _eventRepositoryMock.Get(Arg.Any<Guid>())
+                .Returns(new Event()
                 {
                     Payload = "somePayload",
                     EventState = EventState.Pending
@@ -130,16 +126,17 @@ public class EventServiceTests
 
             await _sut.SetAsProcessed(Guid.NewGuid());
 
-            _eventRepositoryMock.Verify(x => x.Update(It.Is<Event>(y =>
-                y.ProcessedUtc == _now &&
-                y.EventState == EventState.Processed)));
+            await _eventRepositoryMock
+                .Received()
+                .Update(Arg.Is<Event>(x => x.ProcessedUtc == _now &&
+                                           x.EventState == EventState.Processed));
         }
 
         [Fact]
         public async Task SetsEventAsProcessedForInProcessing()
         {
-            _eventRepositoryMock.Setup(m => m.Get(It.IsAny<Guid>()))
-                .ReturnsAsync(new Event()
+            _eventRepositoryMock.Get(Arg.Any<Guid>())
+                .Returns(new Event()
                 {
                     Payload = "somePayload",
                     EventState = EventState.InProcessing
@@ -147,9 +144,10 @@ public class EventServiceTests
 
             await _sut.SetAsProcessed(Guid.NewGuid());
 
-            _eventRepositoryMock.Verify(x => x.Update(It.Is<Event>(y =>
-                y.ProcessedUtc == _now &&
-                y.EventState == EventState.Processed)));
+            await _eventRepositoryMock
+                .Received()
+                .Update(Arg.Is<Event>(x => x.ProcessedUtc == _now &&
+                                           x.EventState == EventState.Processed));
         }
     }
 
@@ -158,8 +156,8 @@ public class EventServiceTests
         [Fact]
         public async Task SetsEventAsFailed()
         {
-            _eventRepositoryMock.Setup(m => m.Get(It.IsAny<Guid>()))
-                .ReturnsAsync(new Event()
+            _eventRepositoryMock.Get(Arg.Any<Guid>())
+                .ReturnsForAnyArgs(new Event()
                 {
                     Payload = "somePayload",
                     EventState = EventState.InProcessing
@@ -167,8 +165,8 @@ public class EventServiceTests
 
             await _sut.SetAsFailed(Guid.NewGuid());
 
-            _eventRepositoryMock.Verify(x => x.Update(It.Is<Event>(y =>
-                y.EventState == EventState.Failed)));
+            await _eventRepositoryMock.Received().Update(Arg.Is<Event>(y =>
+                y.EventState == EventState.Failed));
         }
 
         [Fact]
@@ -184,8 +182,8 @@ public class EventServiceTests
         [Fact]
         public async Task SetsEventAsAborted()
         {
-            _eventRepositoryMock.Setup(m => m.Get(It.IsAny<Guid>()))
-                .ReturnsAsync(new Event()
+            _eventRepositoryMock.Get(Arg.Any<Guid>())
+                .Returns(new Event()
                 {
                     Payload = "somePayload",
                     EventState = EventState.InProcessing
@@ -193,8 +191,8 @@ public class EventServiceTests
 
             await _sut.SetAsAborted(Guid.NewGuid());
 
-            _eventRepositoryMock.Verify(x => x.Update(It.Is<Event>(y =>
-                y.EventState == EventState.Aborted)));
+            await _eventRepositoryMock.Received().Update(Arg.Is<Event>(y =>
+                y.EventState == EventState.Aborted));
         }
     }
 }

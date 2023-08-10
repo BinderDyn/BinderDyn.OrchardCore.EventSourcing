@@ -5,6 +5,12 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <TargetFramework>net7.0</TargetFramework>
+        <Title>BinderDyn.OrchardCore.EventSourcing</Title>
+        <Authors>Marvin Binder</Authors>
+        <Description>Offers serialization and deserialization for payloads for event driven </Description>
+        <Copyright>Marvin Binder 2023</Copyright>
+        <RepositoryUrl>https://github.com/BinderDyn/BinderDyn.OrchardCore.EventSourcing</RepositoryUrl>
+        <PackageTags>Events,OrchardCore,EventSourcing</PackageTags>
     </PropertyGroup>
 
     <ItemGroup>

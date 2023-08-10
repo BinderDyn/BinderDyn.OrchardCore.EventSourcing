@@ -2,7 +2,6 @@ using BinderDyn.OrchardCore.EventSourcing.Data;
 using BinderDyn.OrchardCore.EventSourcing.Enums;
 using BinderDyn.OrchardCore.EventSourcing.Exceptions;
 using BinderDyn.OrchardCore.EventSourcing.Models;
-using BinderDyn.OrchardCore.EventSourcing.Wrapper;
 using Newtonsoft.Json;
 using OrchardCore.Modules;
 
