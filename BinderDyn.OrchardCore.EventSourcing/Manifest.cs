@@ -4,7 +4,11 @@ using OrchardCore.Modules.Manifest;
     Name = "BinderDyn.OrchardCore.EventSourcing",
     Author = "Marvin Binder",
     Website = "https://marvinbinder.com",
-    Version = "0.0.1",
+    Version = "1.0.1",
     Description = "Enables event storage, procession and monitoring",
-    Category = "Event Sourcing"
+    Category = "Event Sourcing",
+    Dependencies = new[]
+    {
+        "OrchardCore.Localization"
+    }
 )]
