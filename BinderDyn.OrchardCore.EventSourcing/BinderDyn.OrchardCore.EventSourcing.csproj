@@ -7,37 +7,37 @@
         <TargetFramework>net7.0</TargetFramework>
         <Title>BinderDyn.OrchardCore.EventSourcing</Title>
         <Authors>Marvin Binder</Authors>
-        <Description>Offers serialization and deserialization for payloads for event driven </Description>
+        <Description>Offers serialization and deserialization for payloads for event driven</Description>
         <Copyright>Marvin Binder 2023</Copyright>
         <RepositoryUrl>https://github.com/BinderDyn/BinderDyn.OrchardCore.EventSourcing</RepositoryUrl>
         <PackageTags>Events,OrchardCore,EventSourcing</PackageTags>
     </PropertyGroup>
 
     <ItemGroup>
-        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+        <FrameworkReference Include="Microsoft.AspNetCore.App"/>
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.9" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.9"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.9">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.9" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.9" />
-        <PackageReference Include="OrchardCore.Abstractions" Version="1.6.0" />
-        <PackageReference Include="OrchardCore.Admin.Abstractions" Version="1.6.0" />
-        <PackageReference Include="OrchardCore.Data.YesSql.Abstractions" Version="1.6.0" />
-        <PackageReference Include="OrchardCore.DisplayManagement" Version="1.6.0" />
-        <PackageReference Include="OrchardCore.Module.Targets" Version="1.6.0" />
-        <PackageReference Include="OrchardCore.Navigation.Core" Version="1.6.0" />
-        <PackageReference Include="YesSql.Abstractions" Version="3.3.0" />
-        <PackageReference Include="YesSql.Core" Version="3.3.0" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.9"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.9"/>
+        <PackageReference Include="OrchardCore.Abstractions" Version="1.7.0"/>
+        <PackageReference Include="OrchardCore.Admin.Abstractions" Version="1.7.0"/>
+        <PackageReference Include="OrchardCore.Data.YesSql.Abstractions" Version="1.7.0"/>
+        <PackageReference Include="OrchardCore.DisplayManagement" Version="1.7.0"/>
+        <PackageReference Include="OrchardCore.Module.Targets" Version="1.7.0"/>
+        <PackageReference Include="OrchardCore.Navigation.Core" Version="1.7.0"/>
+        <PackageReference Include="YesSql.Abstractions" Version="3.3.0"/>
+        <PackageReference Include="YesSql.Core" Version="3.3.0"/>
     </ItemGroup>
 
     <ItemGroup>
-      <Content Include="Views\NavigationItemText-events.Id.cshtml" />
-      <Content Include="Views\_ViewImports.cshtml" />
+        <Content Include="Views\NavigationItemText-events.Id.cshtml"/>
+        <Content Include="Views\_ViewImports.cshtml"/>
     </ItemGroup>
 
 </Project>
