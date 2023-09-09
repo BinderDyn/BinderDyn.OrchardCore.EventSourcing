@@ -32,7 +32,8 @@ This will work only with SQL-Server and with a unique database for each tenant. 
       }
     }
    ```
-3. You can view the created events in the 'Events' menu point in the admin frontend
+3. Activate the feature in the tenant you want to use it for
+4. You can view the created events in the 'Events' menu point in the admin frontend
 
 ## Create Events
 
