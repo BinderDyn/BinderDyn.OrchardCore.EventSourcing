@@ -1,5 +1,6 @@
 # BinderDyn.OrchardCore.EventSourcing
-[![.NET](https://github.com/BinderDyn/BinderDyn.OrchardCore.EventSourcing/actions/workflows/dotnet.yml/badge.svg?branch=main)](https://github.com/BinderDyn/BinderDyn.OrchardCore.EventSourcing/actions/workflows/dotnet.yml)
+[![Build and test on main](https://github.com/BinderDyn/BinderDyn.OrchardCore.EventSourcing/actions/workflows/dotnet.yml/badge.svg?branch=main)](https://github.com/BinderDyn/BinderDyn.OrchardCore.EventSourcing/actions/workflows/dotnet.yml)
+[![Build and test on develop](https://github.com/BinderDyn/BinderDyn.OrchardCore.EventSourcing/actions/workflows/dotnet_develop.yml/badge.svg)](https://github.com/BinderDyn/BinderDyn.OrchardCore.EventSourcing/actions/workflows/dotnet_develop.yml)
 
 This package is meant to be used with OrchardCore. List events, handle them and get a history in a relational table besides your other tables.
 
