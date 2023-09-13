@@ -1,4 +1,4 @@
-﻿using BinderDyn.OrchardCore.EventSourcing.Enums;
+﻿using BinderDyn.OrchardCore.EventSourcing.Abstractions.Enums;
 using BinderDyn.OrchardCore.EventSourcing.Exceptions;
 
 namespace BinderDyn.OrchardCore.EventSourcing.Services;

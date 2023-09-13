@@ -1,10 +1,11 @@
 ﻿using OrchardCore.Environment.Shell;
 
-namespace BinderDyn.OrchardCore.EventSourcing.Data;
+namespace BinderDyn.OrchardCore.EventSourcing.Abstractions.Data;
 
 public interface IDbConnectionProvider
 {
     string GetConnectionString();
+    string GetProvider();
 }
 
 public class DbConnectionProvider : IDbConnectionProvider
@@ -19,5 +20,10 @@ public class DbConnectionProvider : IDbConnectionProvider
     public string GetConnectionString()
     {
         return _shellSettings["ConnectionString"] ?? string.Empty;
+    }
+
+    public string GetProvider()
+    {
+        return _shellSettings["DatabaseProvider"] ?? string.Empty;
     }
 }

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace BinderDyn.OrchardCore.EventSourcing.Migrations
+namespace BinderDyn.OrchardCore.EventSourcing.SqlServer.Migrations
 {
     /// <inheritdoc />
     public partial class initial : Migration

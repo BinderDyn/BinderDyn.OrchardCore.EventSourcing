@@ -1,4 +1,4 @@
-using BinderDyn.OrchardCore.EventSourcing.Enums;
+using BinderDyn.OrchardCore.EventSourcing.Abstractions.Enums;
 using BinderDyn.OrchardCore.EventSourcing.Models;
 using BinderDyn.OrchardCore.EventSourcing.Services;
 using BinderDyn.OrchardCore.EventSourcing.ViewModels;
@@ -34,7 +34,7 @@ public class EventController : Controller
         {
             Skip = paging.Skip,
             Take = pageSize,
-            States = new[] {state}
+            States = new[] { state }
         });
 
         return View("Index", new EventTableViewModel()
@@ -52,12 +52,12 @@ public class EventController : Controller
     {
         if (allItems == 0) allItems = 1;
 
-        var pages = (int) Math.Ceiling((double) allItems / pageSize);
+        var pages = (int)Math.Ceiling((double)allItems / pageSize);
 
         return new Paging()
         {
             AmountOfPages = pages,
-            Skip = (currentPage - 1) * pageSize,
+            Skip = (currentPage - 1) * pageSize
         };
     }
 

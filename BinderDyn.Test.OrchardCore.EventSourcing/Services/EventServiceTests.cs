@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
+using BinderDyn.OrchardCore.EventSourcing.Abstractions.Enums;
+using BinderDyn.OrchardCore.EventSourcing.Abstractions.Models;
 using BinderDyn.OrchardCore.EventSourcing.Data;
-using BinderDyn.OrchardCore.EventSourcing.Enums;
 using BinderDyn.OrchardCore.EventSourcing.Exceptions;
-using BinderDyn.OrchardCore.EventSourcing.Models;
 using BinderDyn.OrchardCore.EventSourcing.Services;
 using FluentAssertions;
 using NSubstitute;
@@ -71,7 +71,7 @@ public class EventServiceTests
         public async Task ShouldReturnEventIfAvailable()
         {
             _eventRepositoryMock.GetNextPending(null)
-                .ReturnsForAnyArgs(new Event() {Payload = "event"});
+                .ReturnsForAnyArgs(new Event() { Payload = "event" });
 
             var result = await _sut.GetNextPending();
 

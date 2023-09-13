@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BinderDyn.OrchardCore.EventSourcing.Abstractions.Enums;
+using BinderDyn.OrchardCore.EventSourcing.Abstractions.Models;
 using BinderDyn.OrchardCore.EventSourcing.Data;
-using BinderDyn.OrchardCore.EventSourcing.Enums;
 using BinderDyn.OrchardCore.EventSourcing.Exceptions;
-using BinderDyn.OrchardCore.EventSourcing.Models;
+using BinderDyn.OrchardCore.EventSourcing.SqlServer.Data;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using NSubstitute;
@@ -15,12 +16,12 @@ namespace BinderDyn.Test.OrchardCore.EventSourcing.Data;
 
 public class EventRepositoryTests
 {
-    private readonly EventSourcingDbContext _dbContext;
+    private readonly EventSourcingSqlDbContext _dbContext;
     private readonly EventRepository _sut;
 
     public EventRepositoryTests()
     {
-        _dbContext = new EventSourcingDbContext(Substitute.For<IServiceProvider>(), builder =>
+        _dbContext = new EventSourcingSqlDbContext(Substitute.For<IServiceProvider>(), builder =>
             builder.UseInMemoryDatabase(Guid.NewGuid().ToString()));
 
         _sut = new EventRepository(_dbContext);
@@ -61,7 +62,7 @@ public class EventRepositoryTests
             _dbContext.Add(existingEvent);
             await _dbContext.SaveChangesAsync();
 
-            await _sut.Update(new Event() {EventId = existingEvent.EventId, Payload = "somethingElse"});
+            await _sut.Update(new Event() { EventId = existingEvent.EventId, Payload = "somethingElse" });
 
             (await _dbContext.Events.FirstAsync()).Payload.Should().Be("somethingElse");
         }
@@ -70,7 +71,7 @@ public class EventRepositoryTests
         public async Task ShouldThrowIfNoEventForThisId()
         {
             await Assert.ThrowsAsync<EventNotFoundException>(() =>
-                _sut.Update(new Event() {EventId = Guid.NewGuid(), Payload = "irrelevant"}));
+                _sut.Update(new Event() { EventId = Guid.NewGuid(), Payload = "irrelevant" }));
         }
     }
 
@@ -104,7 +105,7 @@ public class EventRepositoryTests
         [Fact]
         public async Task ShouldGetNextPendingEventIfAvailable()
         {
-            var existingEvent = new Event() {EventState = EventState.Pending};
+            var existingEvent = new Event() { EventState = EventState.Pending };
             _dbContext.Add(existingEvent);
             await _dbContext.SaveChangesAsync();
 

@@ -9,6 +9,9 @@ using OrchardCore.Modules.Manifest;
     Category = "Event Sourcing",
     Dependencies = new[]
     {
-        "OrchardCore.Localization"
+        "OrchardCore.Localization",
+        "BinderDyn.OrchardCore.EventSourcing.Abstractions",
+        "BinderDyn.OrchardCore.EventSourcing.SqlServer",
+        "BinderDyn.OrchardCore.EventSourcing.SQLite"
     }
 )]

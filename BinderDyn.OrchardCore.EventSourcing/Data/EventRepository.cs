@@ -1,13 +1,8 @@
-using System.Data.Common;
-using BinderDyn.OrchardCore.EventSourcing.Enums;
+using BinderDyn.OrchardCore.EventSourcing.Abstractions.Data;
+using BinderDyn.OrchardCore.EventSourcing.Abstractions.Enums;
+using BinderDyn.OrchardCore.EventSourcing.Abstractions.Models;
 using BinderDyn.OrchardCore.EventSourcing.Exceptions;
-using BinderDyn.OrchardCore.EventSourcing.Models;
-using Dapper;
 using Microsoft.EntityFrameworkCore;
-using OrchardCore.Data;
-using OrchardCore.Environment.Shell;
-using YesSql;
-using YesSql.Commands;
 
 namespace BinderDyn.OrchardCore.EventSourcing.Data;
 
@@ -23,9 +18,9 @@ public interface IEventRepository
 
 public class EventRepository : IEventRepository
 {
-    private readonly EventSourcingDbContext _dbContext;
+    private readonly IEventSourcingDbContext _dbContext;
 
-    public EventRepository(EventSourcingDbContext dbContext)
+    public EventRepository(IEventSourcingDbContext dbContext)
     {
         _dbContext = dbContext;
     }
@@ -36,9 +31,7 @@ public class EventRepository : IEventRepository
             throw new ArgumentNullException(nameof(param), "Event creation param cannot be null!");
         Event? originalEvent = default;
         if (param.OriginalEventId.HasValue)
-        {
             originalEvent = await _dbContext.Events.SingleOrDefaultAsync(x => x.EventId == param.OriginalEventId);
-        }
 
         var newEvent = new Event()
         {
@@ -51,7 +44,7 @@ public class EventRepository : IEventRepository
             PayloadType = param.PayloadType
         };
 
-        _dbContext.Add(newEvent);
+        _dbContext.Events.Add(newEvent);
 
         await _dbContext.SaveChangesAsync();
 
@@ -103,12 +96,10 @@ public class EventRepository : IEventRepository
         var query = _dbContext.Events.AsQueryable();
 
         if (states.Contains(EventState.All))
-        {
             return await query
                 .Skip(skip)
                 .Take(take)
                 .ToArrayAsync();
-        }
 
         return await query.Where(x => states.Contains(x.EventState))
             .Skip(skip)

@@ -1,5 +1,5 @@
 using System;
-using BinderDyn.OrchardCore.EventSourcing.Enums;
+using BinderDyn.OrchardCore.EventSourcing.Abstractions.Enums;
 using BinderDyn.OrchardCore.EventSourcing.Exceptions;
 using BinderDyn.OrchardCore.EventSourcing.Services;
 using Xunit;
