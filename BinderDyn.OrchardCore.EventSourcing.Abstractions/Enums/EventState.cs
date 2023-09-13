@@ -1,4 +1,4 @@
-namespace BinderDyn.OrchardCore.EventSourcing.Enums;
+namespace BinderDyn.OrchardCore.EventSourcing.Abstractions.Enums;
 
 public enum EventState
 {

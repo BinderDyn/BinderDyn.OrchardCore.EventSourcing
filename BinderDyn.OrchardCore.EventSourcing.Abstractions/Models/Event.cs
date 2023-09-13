@@ -1,9 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using BinderDyn.OrchardCore.EventSourcing.Enums;
-using Microsoft.EntityFrameworkCore;
+using BinderDyn.OrchardCore.EventSourcing.Abstractions.Enums;
 
-namespace BinderDyn.OrchardCore.EventSourcing.Models;
+namespace BinderDyn.OrchardCore.EventSourcing.Abstractions.Models;
 
 public interface IEvent
 {

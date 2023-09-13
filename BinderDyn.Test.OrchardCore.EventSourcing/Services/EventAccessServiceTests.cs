@@ -1,7 +1,8 @@
 using System;
 using System.Threading.Tasks;
+using BinderDyn.OrchardCore.EventSourcing.Abstractions.Enums;
+using BinderDyn.OrchardCore.EventSourcing.Abstractions.Models;
 using BinderDyn.OrchardCore.EventSourcing.Data;
-using BinderDyn.OrchardCore.EventSourcing.Enums;
 using BinderDyn.OrchardCore.EventSourcing.Models;
 using BinderDyn.OrchardCore.EventSourcing.Services;
 using FluentAssertions;
@@ -45,10 +46,10 @@ public class EventAccessServiceTests
             {
                 Skip = 0,
                 Take = 5,
-                States = new[] {EventState.Pending}
+                States = new[] { EventState.Pending }
             });
 
-            await _eventRepositoryMock.Received().GetPagedByStates(0, 5, new[] {EventState.Pending});
+            await _eventRepositoryMock.Received().GetPagedByStates(0, 5, new[] { EventState.Pending });
 
             result.Length.Should().Be(3);
         }
@@ -60,10 +61,10 @@ public class EventAccessServiceTests
             {
                 Skip = 0,
                 Take = 5,
-                States = new[] {EventState.Pending}
+                States = new[] { EventState.Pending }
             });
 
-            await _eventRepositoryMock.Received().GetPagedByStates(0, 5, new[] {EventState.Pending});
+            await _eventRepositoryMock.Received().GetPagedByStates(0, 5, new[] { EventState.Pending });
 
             result.Length.Should().Be(0);
         }

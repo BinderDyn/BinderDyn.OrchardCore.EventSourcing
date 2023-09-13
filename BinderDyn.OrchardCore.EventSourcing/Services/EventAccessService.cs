@@ -1,5 +1,5 @@
+using BinderDyn.OrchardCore.EventSourcing.Abstractions.Enums;
 using BinderDyn.OrchardCore.EventSourcing.Data;
-using BinderDyn.OrchardCore.EventSourcing.Enums;
 using BinderDyn.OrchardCore.EventSourcing.Models;
 using BinderDyn.OrchardCore.EventSourcing.ViewModels;
 using Microsoft.Extensions.Logging;

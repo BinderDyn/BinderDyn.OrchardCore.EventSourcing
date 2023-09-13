@@ -1,5 +1,5 @@
-using BinderDyn.OrchardCore.EventSourcing.Enums;
-using BinderDyn.OrchardCore.EventSourcing.Models;
+using BinderDyn.OrchardCore.EventSourcing.Abstractions.Enums;
+using BinderDyn.OrchardCore.EventSourcing.Abstractions.Models;
 
 namespace BinderDyn.OrchardCore.EventSourcing.ViewModels;
 
@@ -21,7 +21,7 @@ public class EventViewModel
                     eventData.ProcessedUtc.Value.Hour, eventData.ProcessedUtc.Value.Minute,
                     eventData.ProcessedUtc.Value.Second,
                     DateTimeKind.Utc)
-                : (DateTime?) null;
+                : (DateTime?)null;
 
         EventId = eventData.EventId;
         FriendlyName = eventData.EventTypeFriendlyName;
