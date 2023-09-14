@@ -6,7 +6,7 @@ This package is meant to be used with OrchardCore. List events, handle them and 
 
 ## Hint
 
-This will work only with SQL-Server and with a unique database for each tenant. I didn't find a way to get this working with SQLite or with multiple tenants in one database.
+This will work only with SQL-Server, Postgres and MySQL and with a unique database for each tenant. I didn't find a way to get this working with SQLite or with multiple tenants in one database.
 
 ## Usage
 
