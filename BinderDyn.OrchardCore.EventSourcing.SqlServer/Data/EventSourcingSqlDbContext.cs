@@ -10,12 +10,14 @@ namespace BinderDyn.OrchardCore.EventSourcing.SqlServer.Data;
 public class EventSourcingSqlDbContext : DbContext, IEventSourcingDbContext
 {
     private readonly IServiceProvider _serviceProvider;
+    private readonly string _tablePrefix = string.Empty;
     private readonly Action<DbContextOptionsBuilder>? _overrideOnConfiguring;
 
-    public EventSourcingSqlDbContext(IServiceProvider serviceProvider,
+    public EventSourcingSqlDbContext(IServiceProvider serviceProvider, string tablePrefix,
         Action<DbContextOptionsBuilder>? overrideOnConfiguring = null)
     {
         _serviceProvider = serviceProvider;
+        _tablePrefix = tablePrefix;
         _overrideOnConfiguring = overrideOnConfiguring;
     }
 
@@ -41,6 +43,13 @@ public class EventSourcingSqlDbContext : DbContext, IEventSourcingDbContext
 
         // Used in production/development
         optionsBuilder.UseSqlServer(connectionString, options => options.CommandTimeout(600));
+    }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Event>().ToTable(_tablePrefix + "_" + "Events");
+
+        base.OnModelCreating(modelBuilder);
     }
 
     public virtual DbSet<Event> Events { get; set; }

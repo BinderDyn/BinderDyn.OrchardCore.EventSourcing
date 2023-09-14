@@ -16,7 +16,6 @@ public interface IEvent
     public EventState EventState { get; set; }
 }
 
-[Table("Events")]
 // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
 public class Event : IEvent
 {

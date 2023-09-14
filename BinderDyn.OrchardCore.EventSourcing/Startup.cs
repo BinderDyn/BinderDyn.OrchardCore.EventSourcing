@@ -24,7 +24,7 @@ public class Startup : StartupBase
         services.AddScoped<IGuidWrapper, GuidWrapper>();
         services.AddScoped<INavigationProvider, AdminMenu>();
         services.AddScoped<IEventAccessService, EventAccessService>();
-        services.AddDbContext<EventSourcingSqlDbContext>();
+        services.AddScoped<SqlDbContextFactory>();
         services.AddDbContext<EventSourcingPostgresDbContext>();
         services.AddDbContext<EventSourcingMySqlDbContext>();
         services.AddScoped<IDbAdapterService, DbAdapterService>();

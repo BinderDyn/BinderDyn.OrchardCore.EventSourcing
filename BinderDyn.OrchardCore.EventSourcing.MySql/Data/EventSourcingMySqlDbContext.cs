@@ -2,6 +2,7 @@
 using BinderDyn.OrchardCore.EventSourcing.Abstractions.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using OrchardCore.Environment.Shell;
 
 namespace BinderDyn.OrchardCore.EventSourcing.MySql.Data;
 
@@ -41,6 +42,17 @@ public class EventSourcingMySqlDbContext : DbContext, IEventSourcingDbContext
 
         // Used in production/development
         optionsBuilder.UseMySQL(connectionString, options => options.CommandTimeout(600));
+    }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        var shellSettings = _serviceProvider.GetRequiredService<ShellSettings>();
+        var tablePrefix = shellSettings["TablePrefix"];
+
+        if (!string.IsNullOrWhiteSpace(tablePrefix))
+            modelBuilder.Entity<Event>().ToTable(tablePrefix + "_" + "Events");
+
+        base.OnModelCreating(modelBuilder);
     }
 
     public virtual DbSet<Event> Events { get; set; }

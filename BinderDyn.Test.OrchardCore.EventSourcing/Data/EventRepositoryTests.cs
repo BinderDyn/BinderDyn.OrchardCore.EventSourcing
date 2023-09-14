@@ -23,7 +23,7 @@ public class EventRepositoryTests
 
     public EventRepositoryTests()
     {
-        _dbContext = new EventSourcingSqlDbContext(Substitute.For<IServiceProvider>(), builder =>
+        _dbContext = new EventSourcingSqlDbContext(Substitute.For<IServiceProvider>(), string.Empty, builder =>
             builder.UseInMemoryDatabase(Guid.NewGuid().ToString()));
         _dbAdapterService = Substitute.For<IDbAdapterService>();
         _dbAdapterService.GetCorrectContext().Returns(_dbContext);
