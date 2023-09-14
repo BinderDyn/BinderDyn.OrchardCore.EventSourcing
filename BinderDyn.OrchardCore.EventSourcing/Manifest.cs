@@ -12,6 +12,6 @@ using OrchardCore.Modules.Manifest;
         "OrchardCore.Localization",
         "BinderDyn.OrchardCore.EventSourcing.Abstractions",
         "BinderDyn.OrchardCore.EventSourcing.SqlServer",
-        "BinderDyn.OrchardCore.EventSourcing.SQLite"
+        "BinderDyn.OrchardCore.EventSourcing.Postgres"
     }
 )]

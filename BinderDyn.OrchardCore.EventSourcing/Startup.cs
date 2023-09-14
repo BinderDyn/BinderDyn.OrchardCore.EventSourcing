@@ -1,6 +1,7 @@
 using BinderDyn.OrchardCore.EventSourcing.Abstractions.Data;
 using BinderDyn.OrchardCore.EventSourcing.Data;
 using BinderDyn.OrchardCore.EventSourcing.Extensions;
+using BinderDyn.OrchardCore.EventSourcing.Postgres.Data;
 using BinderDyn.OrchardCore.EventSourcing.Services;
 using BinderDyn.OrchardCore.EventSourcing.SqlServer.Data;
 using BinderDyn.OrchardCore.EventSourcing.Wrapper;
@@ -23,6 +24,8 @@ public class Startup : StartupBase
         services.AddScoped<INavigationProvider, AdminMenu>();
         services.AddScoped<IEventAccessService, EventAccessService>();
         services.AddDbContext<EventSourcingSqlDbContext>();
+        services.AddDbContext<EventSourcingPostgresDbContext>();
+        services.AddScoped<IDbAdapterService, DbAdapterService>();
     }
 
     public override void Configure(IApplicationBuilder builder, IEndpointRouteBuilder routes,

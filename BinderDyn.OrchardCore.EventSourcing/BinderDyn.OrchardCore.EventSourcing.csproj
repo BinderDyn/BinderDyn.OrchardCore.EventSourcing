@@ -37,6 +37,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\BinderDyn.OrchardCore.EventSourcing.Abstractions\BinderDyn.OrchardCore.EventSourcing.Abstractions.csproj" />
+        <ProjectReference Include="..\BinderDyn.OrchardCore.EventSourcing.Postgres\BinderDyn.OrchardCore.EventSourcing.Postgres.csproj" />
         <ProjectReference Include="..\BinderDyn.OrchardCore.EventSourcing.SqlServer\BinderDyn.OrchardCore.EventSourcing.SqlServer.csproj" />
     </ItemGroup>
 

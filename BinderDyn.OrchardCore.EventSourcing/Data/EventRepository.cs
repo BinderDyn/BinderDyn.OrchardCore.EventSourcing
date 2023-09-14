@@ -2,6 +2,7 @@ using BinderDyn.OrchardCore.EventSourcing.Abstractions.Data;
 using BinderDyn.OrchardCore.EventSourcing.Abstractions.Enums;
 using BinderDyn.OrchardCore.EventSourcing.Abstractions.Models;
 using BinderDyn.OrchardCore.EventSourcing.Exceptions;
+using BinderDyn.OrchardCore.EventSourcing.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace BinderDyn.OrchardCore.EventSourcing.Data;
@@ -20,9 +21,9 @@ public class EventRepository : IEventRepository
 {
     private readonly IEventSourcingDbContext _dbContext;
 
-    public EventRepository(IEventSourcingDbContext dbContext)
+    public EventRepository(IDbAdapterService dbAdapterService)
     {
-        _dbContext = dbContext;
+        _dbContext = dbAdapterService.GetCorrectContext();
     }
 
     public async Task<Guid> Add(Event.EventCreationParam? param)
