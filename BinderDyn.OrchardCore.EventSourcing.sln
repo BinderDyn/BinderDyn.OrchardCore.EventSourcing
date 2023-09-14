@@ -14,6 +14,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinderDyn.OrchardCore.Event
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinderDyn.OrchardCore.EventSourcing.Postgres", "BinderDyn.OrchardCore.EventSourcing.Postgres\BinderDyn.OrchardCore.EventSourcing.Postgres.csproj", "{FCF1C014-2B25-4C5C-A1BE-B7EF4DD2108C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinderDyn.OrchardCore.EventSourcing.MySql", "BinderDyn.OrchardCore.EventSourcing.MySql\BinderDyn.OrchardCore.EventSourcing.MySql.csproj", "{DCECF561-A672-4C9B-9F2C-9D689D37DC4B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,5 +50,9 @@ Global
 		{FCF1C014-2B25-4C5C-A1BE-B7EF4DD2108C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FCF1C014-2B25-4C5C-A1BE-B7EF4DD2108C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FCF1C014-2B25-4C5C-A1BE-B7EF4DD2108C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DCECF561-A672-4C9B-9F2C-9D689D37DC4B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DCECF561-A672-4C9B-9F2C-9D689D37DC4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DCECF561-A672-4C9B-9F2C-9D689D37DC4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DCECF561-A672-4C9B-9F2C-9D689D37DC4B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
