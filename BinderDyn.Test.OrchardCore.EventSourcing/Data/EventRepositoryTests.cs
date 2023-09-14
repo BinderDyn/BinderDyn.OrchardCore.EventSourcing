@@ -6,6 +6,7 @@ using BinderDyn.OrchardCore.EventSourcing.Abstractions.Enums;
 using BinderDyn.OrchardCore.EventSourcing.Abstractions.Models;
 using BinderDyn.OrchardCore.EventSourcing.Data;
 using BinderDyn.OrchardCore.EventSourcing.Exceptions;
+using BinderDyn.OrchardCore.EventSourcing.Services;
 using BinderDyn.OrchardCore.EventSourcing.SqlServer.Data;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
@@ -17,14 +18,17 @@ namespace BinderDyn.Test.OrchardCore.EventSourcing.Data;
 public class EventRepositoryTests
 {
     private readonly EventSourcingSqlDbContext _dbContext;
+    private readonly IDbAdapterService _dbAdapterService;
     private readonly EventRepository _sut;
 
     public EventRepositoryTests()
     {
         _dbContext = new EventSourcingSqlDbContext(Substitute.For<IServiceProvider>(), builder =>
             builder.UseInMemoryDatabase(Guid.NewGuid().ToString()));
+        _dbAdapterService = Substitute.For<IDbAdapterService>();
+        _dbAdapterService.GetCorrectContext().Returns(_dbContext);
 
-        _sut = new EventRepository(_dbContext);
+        _sut = new EventRepository(_dbAdapterService);
     }
 
     public class Add : EventRepositoryTests

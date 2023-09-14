@@ -1,4 +1,6 @@
-﻿using BinderDyn.OrchardCore.EventSourcing.SqlServer.Data;
+﻿using BinderDyn.OrchardCore.EventSourcing.Postgres.Data;
+using BinderDyn.OrchardCore.EventSourcing.Services;
+using BinderDyn.OrchardCore.EventSourcing.SqlServer.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,11 +14,9 @@ public static class ApplicationBuilderExtensions
         using var serviceScope = applicationBuilder.ApplicationServices
             .GetRequiredService<IServiceScopeFactory>().CreateScope();
 
+        var dbAdapterService = serviceScope.ServiceProvider.GetRequiredService<IDbAdapterService>();
+        var context = dbAdapterService.GetCorrectContext() as DbContext;
 
-        if (provider == "SqlConnection")
-        {
-            var context = serviceScope.ServiceProvider.GetService<EventSourcingSqlDbContext>();
-            context?.Database.Migrate();
-        }
+        context?.Database.Migrate();
     }
 }
