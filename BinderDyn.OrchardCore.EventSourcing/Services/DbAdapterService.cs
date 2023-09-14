@@ -1,4 +1,5 @@
 ﻿using BinderDyn.OrchardCore.EventSourcing.Abstractions.Data;
+using BinderDyn.OrchardCore.EventSourcing.MySql.Data;
 using BinderDyn.OrchardCore.EventSourcing.Postgres.Data;
 using BinderDyn.OrchardCore.EventSourcing.SqlServer.Data;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,6 +31,7 @@ public class DbAdapterService : IDbAdapterService
         {
             "SqlConnection" => _serviceProvider.GetRequiredService<EventSourcingSqlDbContext>(),
             "Postgres" => _serviceProvider.GetRequiredService<EventSourcingPostgresDbContext>(),
+            "MySql" => _serviceProvider.GetRequiredService<EventSourcingMySqlDbContext>(),
             _ => throw new NotImplementedException(dbProvider)
         };
     }

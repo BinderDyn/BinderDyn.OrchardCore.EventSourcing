@@ -1,6 +1,7 @@
 using BinderDyn.OrchardCore.EventSourcing.Abstractions.Data;
 using BinderDyn.OrchardCore.EventSourcing.Data;
 using BinderDyn.OrchardCore.EventSourcing.Extensions;
+using BinderDyn.OrchardCore.EventSourcing.MySql.Data;
 using BinderDyn.OrchardCore.EventSourcing.Postgres.Data;
 using BinderDyn.OrchardCore.EventSourcing.Services;
 using BinderDyn.OrchardCore.EventSourcing.SqlServer.Data;
@@ -25,6 +26,7 @@ public class Startup : StartupBase
         services.AddScoped<IEventAccessService, EventAccessService>();
         services.AddDbContext<EventSourcingSqlDbContext>();
         services.AddDbContext<EventSourcingPostgresDbContext>();
+        services.AddDbContext<EventSourcingMySqlDbContext>();
         services.AddScoped<IDbAdapterService, DbAdapterService>();
     }
 
