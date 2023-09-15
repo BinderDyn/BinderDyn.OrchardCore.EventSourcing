@@ -4,11 +4,11 @@ using OrchardCore.Modules.Manifest;
     Name = "BinderDyn.OrchardCore.EventSourcing.Postgres",
     Author = "Marvin Binder",
     Website = "https://marvinbinder.com",
-    Version = "1.2.0",
+    Version = "1.2.1",
     Description = "BinderDyn.OrchardCore.EventSourcing.Postgres",
     Category = "Event Sourcing",
     EnabledByDependencyOnly = true,
-    Dependencies = new []
+    Dependencies = new[]
     {
         "BinderDyn.OrchardCore.EventSourcing.Abstractions"
     }

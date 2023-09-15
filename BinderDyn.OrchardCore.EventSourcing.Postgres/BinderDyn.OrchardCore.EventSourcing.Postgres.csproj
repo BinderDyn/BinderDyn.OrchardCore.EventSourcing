@@ -5,7 +5,7 @@
         <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
-        <Version>1.2.0</Version>
+        <Version>1.2.1</Version>
         <Title>BinderDyn.OrchardCore.EventSourcing.Postgres</Title>
         <Authors>Marvin Binder</Authors>
         <Description>Offers Postgres implementation for event table system</Description>
