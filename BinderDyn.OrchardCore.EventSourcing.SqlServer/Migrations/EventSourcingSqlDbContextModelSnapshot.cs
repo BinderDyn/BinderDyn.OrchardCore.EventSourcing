@@ -4,7 +4,6 @@ using BinderDyn.OrchardCore.EventSourcing.SqlServer.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -12,20 +11,18 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BinderDyn.OrchardCore.EventSourcing.SqlServer.Migrations
 {
     [DbContext(typeof(EventSourcingSqlDbContext))]
-    [Migration("20230725180243_initial")]
-    partial class initial
+    partial class EventSourcingSqlDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.9")
+                .HasAnnotation("ProductVersion", "7.0.11")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("BinderDyn.OrchardCore.EventSourcing.Models.Event", b =>
+            modelBuilder.Entity("BinderDyn.OrchardCore.EventSourcing.Abstractions.Models.Event", b =>
                 {
                     b.Property<Guid>("EventId")
                         .ValueGeneratedOnAdd()
@@ -65,9 +62,9 @@ namespace BinderDyn.OrchardCore.EventSourcing.SqlServer.Migrations
                     b.ToTable("Events");
                 });
 
-            modelBuilder.Entity("BinderDyn.OrchardCore.EventSourcing.Models.Event", b =>
+            modelBuilder.Entity("BinderDyn.OrchardCore.EventSourcing.Abstractions.Models.Event", b =>
                 {
-                    b.HasOne("BinderDyn.OrchardCore.EventSourcing.Models.Event", "OriginalEvent")
+                    b.HasOne("BinderDyn.OrchardCore.EventSourcing.Abstractions.Models.Event", "OriginalEvent")
                         .WithMany()
                         .HasForeignKey("OriginalEventEventId");
 

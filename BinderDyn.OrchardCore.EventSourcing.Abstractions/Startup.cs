@@ -9,5 +9,6 @@ public class Startup : StartupBase
     public override void ConfigureServices(IServiceCollection services)
     {
         services.AddScoped<IDbConnectionProvider, DbConnectionProvider>();
+        services.AddTransient<TablePrefixInterceptor>();
     }
 }

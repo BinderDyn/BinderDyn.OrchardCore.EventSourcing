@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace BinderDyn.OrchardCore.EventSourcing.SqlServer.Migrations
 {
     /// <inheritdoc />
-    public partial class initial : Migration
+    public partial class InitialV2 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

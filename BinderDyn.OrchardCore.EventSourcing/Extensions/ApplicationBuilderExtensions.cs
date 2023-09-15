@@ -17,6 +17,13 @@ public static class ApplicationBuilderExtensions
         var dbAdapterService = serviceScope.ServiceProvider.GetRequiredService<IDbAdapterService>();
         var context = dbAdapterService.GetCorrectContext() as DbContext;
 
-        context?.Database.Migrate();
+        try
+        {
+            context?.Database.Migrate();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
     }
 }

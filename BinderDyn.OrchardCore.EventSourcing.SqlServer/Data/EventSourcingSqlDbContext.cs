@@ -2,6 +2,7 @@
 using BinderDyn.OrchardCore.EventSourcing.Abstractions.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using OrchardCore.Environment.Shell;
 
 namespace BinderDyn.OrchardCore.EventSourcing.SqlServer.Data;
 
@@ -10,14 +11,12 @@ namespace BinderDyn.OrchardCore.EventSourcing.SqlServer.Data;
 public class EventSourcingSqlDbContext : DbContext, IEventSourcingDbContext
 {
     private readonly IServiceProvider _serviceProvider;
-    private readonly string _tablePrefix = string.Empty;
     private readonly Action<DbContextOptionsBuilder>? _overrideOnConfiguring;
 
-    public EventSourcingSqlDbContext(IServiceProvider serviceProvider, string tablePrefix,
+    public EventSourcingSqlDbContext(IServiceProvider serviceProvider,
         Action<DbContextOptionsBuilder>? overrideOnConfiguring = null)
     {
         _serviceProvider = serviceProvider;
-        _tablePrefix = tablePrefix;
         _overrideOnConfiguring = overrideOnConfiguring;
     }
 
@@ -43,11 +42,21 @@ public class EventSourcingSqlDbContext : DbContext, IEventSourcingDbContext
 
         // Used in production/development
         optionsBuilder.UseSqlServer(connectionString, options => options.CommandTimeout(600));
+        optionsBuilder.AddInterceptors(_serviceProvider.GetRequiredService<TablePrefixInterceptor>());
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Event>().ToTable(_tablePrefix + "_" + "Events");
+        try
+        {
+            var shellSettings = _serviceProvider.GetRequiredService<ShellSettings>();
+
+            modelBuilder.Entity<Event>().ToTable(shellSettings["TablePrefix"] + "_" + "Events");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
 
         base.OnModelCreating(modelBuilder);
     }
