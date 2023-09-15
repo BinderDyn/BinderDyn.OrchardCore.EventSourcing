@@ -17,11 +17,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <FrameworkReference Include="Microsoft.AspNetCore.App"/>
-        <None Include="..\README.md" Pack="true" PackagePath="\"/>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+        <None Include="..\README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="BinderDyn.OrchardCore.TablePrefixInterception" Version="1.0.1" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.11">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -34,11 +35,11 @@
     </ItemGroup>
 
     <ItemGroup>
-        <RazorGenerate Remove="Views\Home\Index.cshtml"/>
+        <RazorGenerate Remove="Views\Home\Index.cshtml" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\BinderDyn.OrchardCore.EventSourcing.Abstractions\BinderDyn.OrchardCore.EventSourcing.Abstractions.csproj"/>
+        <ProjectReference Include="..\BinderDyn.OrchardCore.EventSourcing.Abstractions\BinderDyn.OrchardCore.EventSourcing.Abstractions.csproj" />
     </ItemGroup>
 
 </Project>

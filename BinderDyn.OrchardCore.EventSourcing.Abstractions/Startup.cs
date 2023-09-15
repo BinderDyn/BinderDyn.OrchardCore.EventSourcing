@@ -1,4 +1,5 @@
 using BinderDyn.OrchardCore.EventSourcing.Abstractions.Data;
+using BinderDyn.OrchardCore.TablePrefixInterception;
 using Microsoft.Extensions.DependencyInjection;
 using OrchardCore.Modules;
 
@@ -9,6 +10,12 @@ public class Startup : StartupBase
     public override void ConfigureServices(IServiceCollection services)
     {
         services.AddScoped<IDbConnectionProvider, DbConnectionProvider>();
-        services.AddScoped<TablePrefixInterceptor>();
+        services.AddTablePrefixInterceptor(options =>
+        {
+            options.TableNamesToPrefix = new[]
+            {
+                "Events"
+            };
+        });
     }
 }
