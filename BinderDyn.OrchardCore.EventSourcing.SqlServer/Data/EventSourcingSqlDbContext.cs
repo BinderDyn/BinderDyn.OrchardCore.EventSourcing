@@ -1,5 +1,6 @@
 ﻿using BinderDyn.OrchardCore.EventSourcing.Abstractions.Data;
 using BinderDyn.OrchardCore.EventSourcing.Abstractions.Models;
+using BinderDyn.OrchardCore.TablePrefixInterception;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
