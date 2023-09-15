@@ -45,22 +45,6 @@ public class EventSourcingSqlDbContext : DbContext, IEventSourcingDbContext
         optionsBuilder.AddInterceptors(_serviceProvider.GetRequiredService<TablePrefixInterceptor>());
     }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        try
-        {
-            var shellSettings = _serviceProvider.GetRequiredService<ShellSettings>();
-
-            modelBuilder.Entity<Event>().ToTable(shellSettings["TablePrefix"] + "_" + "Events");
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-        }
-
-        base.OnModelCreating(modelBuilder);
-    }
-
     public virtual DbSet<Event> Events { get; set; }
 
     public async Task SaveChangesAsync()

@@ -16,6 +16,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinderDyn.OrchardCore.Event
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinderDyn.OrchardCore.EventSourcing.MySql", "BinderDyn.OrchardCore.EventSourcing.MySql\BinderDyn.OrchardCore.EventSourcing.MySql.csproj", "{DCECF561-A672-4C9B-9F2C-9D689D37DC4B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinderDyn.Test.OrchardCore.EventSourcing.Abstractions", "BinderDyn.Test.OrchardCore.EventSourcing.Abstractions\BinderDyn.Test.OrchardCore.EventSourcing.Abstractions.csproj", "{79260A64-363A-4A88-8A28-6A1CB9375206}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,5 +56,9 @@ Global
 		{DCECF561-A672-4C9B-9F2C-9D689D37DC4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DCECF561-A672-4C9B-9F2C-9D689D37DC4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DCECF561-A672-4C9B-9F2C-9D689D37DC4B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{79260A64-363A-4A88-8A28-6A1CB9375206}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79260A64-363A-4A88-8A28-6A1CB9375206}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79260A64-363A-4A88-8A28-6A1CB9375206}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79260A64-363A-4A88-8A28-6A1CB9375206}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
