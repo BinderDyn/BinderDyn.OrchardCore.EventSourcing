@@ -64,7 +64,7 @@ public class TablePrefixInterceptor : DbCommandInterceptor
 
     private string AddMigrationsHistoryPrefix(DbCommand command)
     {
-        return command.CommandText.Contains("[__EFMigrationsHistory]")
+        return command.CommandText.Contains("__EFMigrationsHistory")
             ? command.CommandText.Replace("__EFMigrationsHistory", _tablePrefix + "__EFMigrationsHistory")
             : command.CommandText;
     }
