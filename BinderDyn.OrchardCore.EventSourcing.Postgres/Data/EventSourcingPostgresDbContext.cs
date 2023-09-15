@@ -2,7 +2,6 @@
 using BinderDyn.OrchardCore.EventSourcing.Abstractions.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using OrchardCore.Environment.Shell;
 
 namespace BinderDyn.OrchardCore.EventSourcing.Postgres.Data;
 

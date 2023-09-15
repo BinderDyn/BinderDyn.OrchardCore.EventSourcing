@@ -15,8 +15,8 @@ public class DbAdapterService : IDbAdapterService
 {
     private readonly IDbConnectionProvider _dbConnectionProvider;
     private readonly IServiceProvider _serviceProvider;
-
-    public DbAdapterService(IDbConnectionProvider dbConnectionProvider,
+    
+    public DbAdapterService(IDbConnectionProvider dbConnectionProvider, 
         IServiceProvider serviceProvider)
     {
         _dbConnectionProvider = dbConnectionProvider;
