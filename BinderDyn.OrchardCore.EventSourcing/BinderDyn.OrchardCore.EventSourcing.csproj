@@ -7,43 +7,43 @@
         <TargetFramework>net7.0</TargetFramework>
         <Title>BinderDyn.OrchardCore.EventSourcing</Title>
         <Authors>Marvin Binder</Authors>
-        <Description>Offers serialization and deserialization for payloads for event driven</Description>
+        <Description>Offers serialization and deserialization for payloads for event driven OrchardCore implementations</Description>
         <Copyright>Marvin Binder 2023</Copyright>
         <RepositoryUrl>https://github.com/BinderDyn/BinderDyn.OrchardCore.EventSourcing</RepositoryUrl>
         <PackageTags>Events,OrchardCore,EventSourcing</PackageTags>
-        <Version>1.1.0</Version>
+        <Version>1.2.0</Version>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
 
     <ItemGroup>
-        <FrameworkReference Include="Microsoft.AspNetCore.App" />
-        <None Include="..\README.md" Pack="true" PackagePath="\" />
+        <FrameworkReference Include="Microsoft.AspNetCore.App"/>
+        <None Include="..\README.md" Pack="true" PackagePath="\"/>
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="OrchardCore.Abstractions" Version="1.7.0" />
-        <PackageReference Include="OrchardCore.Admin.Abstractions" Version="1.7.0" />
-        <PackageReference Include="OrchardCore.Data.YesSql.Abstractions" Version="1.7.0" />
-        <PackageReference Include="OrchardCore.DisplayManagement" Version="1.7.0" />
-        <PackageReference Include="OrchardCore.Infrastructure" Version="1.7.0" />
-        <PackageReference Include="OrchardCore.Module.Targets" Version="1.7.0" />
-        <PackageReference Include="OrchardCore.Navigation.Core" Version="1.7.0" />
-        <PackageReference Include="YesSql.Abstractions" Version="3.3.0" />
-        <PackageReference Include="YesSql.Core" Version="3.3.0" />
+        <PackageReference Include="OrchardCore.Abstractions" Version="1.7.0"/>
+        <PackageReference Include="OrchardCore.Admin.Abstractions" Version="1.7.0"/>
+        <PackageReference Include="OrchardCore.Data.YesSql.Abstractions" Version="1.7.0"/>
+        <PackageReference Include="OrchardCore.DisplayManagement" Version="1.7.0"/>
+        <PackageReference Include="OrchardCore.Infrastructure" Version="1.7.0"/>
+        <PackageReference Include="OrchardCore.Module.Targets" Version="1.7.0"/>
+        <PackageReference Include="OrchardCore.Navigation.Core" Version="1.7.0"/>
+        <PackageReference Include="YesSql.Abstractions" Version="3.3.0"/>
+        <PackageReference Include="YesSql.Core" Version="3.3.0"/>
     </ItemGroup>
 
     <ItemGroup>
-        <Content Include="Views\NavigationItemText-events.Id.cshtml" />
-        <Content Include="Views\_ViewImports.cshtml" />
+        <Content Include="Views\NavigationItemText-events.Id.cshtml"/>
+        <Content Include="Views\_ViewImports.cshtml"/>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\BinderDyn.OrchardCore.EventSourcing.Abstractions\BinderDyn.OrchardCore.EventSourcing.Abstractions.csproj" />
-        <ProjectReference Include="..\BinderDyn.OrchardCore.EventSourcing.MySql\BinderDyn.OrchardCore.EventSourcing.MySql.csproj" />
-        <ProjectReference Include="..\BinderDyn.OrchardCore.EventSourcing.Postgres\BinderDyn.OrchardCore.EventSourcing.Postgres.csproj" />
-        <ProjectReference Include="..\BinderDyn.OrchardCore.EventSourcing.SqlServer\BinderDyn.OrchardCore.EventSourcing.SqlServer.csproj" />
+        <ProjectReference Include="..\BinderDyn.OrchardCore.EventSourcing.Abstractions\BinderDyn.OrchardCore.EventSourcing.Abstractions.csproj"/>
+        <ProjectReference Include="..\BinderDyn.OrchardCore.EventSourcing.MySql\BinderDyn.OrchardCore.EventSourcing.MySql.csproj"/>
+        <ProjectReference Include="..\BinderDyn.OrchardCore.EventSourcing.Postgres\BinderDyn.OrchardCore.EventSourcing.Postgres.csproj"/>
+        <ProjectReference Include="..\BinderDyn.OrchardCore.EventSourcing.SqlServer\BinderDyn.OrchardCore.EventSourcing.SqlServer.csproj"/>
     </ItemGroup>
 
 </Project>
