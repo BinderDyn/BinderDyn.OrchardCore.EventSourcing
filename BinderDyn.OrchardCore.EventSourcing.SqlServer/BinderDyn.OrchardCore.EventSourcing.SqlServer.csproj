@@ -5,31 +5,41 @@
         <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <Version>1.2.0</Version>
+        <Title>BinderDyn.OrchardCore.EventSourcing.SqlServer</Title>
+        <Authors>Marvin Binder</Authors>
+        <Description>Offers SqlServer implementation for event table system</Description>
+        <Copyright>(c) 2023 Marvin Binder</Copyright>
+        <RepositoryUrl>https://github.com/BinderDyn/BinderDyn.OrchardCore.EventSourcing/</RepositoryUrl>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
 
     <ItemGroup>
-        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+        <FrameworkReference Include="Microsoft.AspNetCore.App"/>
+        <None Include="..\README.md" Pack="true" PackagePath="\"/>
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.11" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.11"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.11">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.11" />
-        <PackageReference Include="OrchardCore.Module.Targets" Version="1.7.0" />
-        <PackageReference Include="OrchardCore.ContentManagement" Version="1.7.0" />
-        <PackageReference Include="OrchardCore.ContentTypes.Abstractions" Version="1.7.0" />
-        <PackageReference Include="OrchardCore.DisplayManagement" Version="1.7.0" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.11"/>
+        <PackageReference Include="OrchardCore.Module.Targets" Version="1.7.0"/>
+        <PackageReference Include="OrchardCore.ContentManagement" Version="1.7.0"/>
+        <PackageReference Include="OrchardCore.ContentTypes.Abstractions" Version="1.7.0"/>
+        <PackageReference Include="OrchardCore.DisplayManagement" Version="1.7.0"/>
     </ItemGroup>
 
     <ItemGroup>
-      <RazorGenerate Remove="Views\Home\Index.cshtml" />
+        <RazorGenerate Remove="Views\Home\Index.cshtml"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\BinderDyn.OrchardCore.EventSourcing.Abstractions\BinderDyn.OrchardCore.EventSourcing.Abstractions.csproj" />
+        <ProjectReference Include="..\BinderDyn.OrchardCore.EventSourcing.Abstractions\BinderDyn.OrchardCore.EventSourcing.Abstractions.csproj"/>
     </ItemGroup>
 
 </Project>

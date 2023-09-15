@@ -4,7 +4,7 @@ using OrchardCore.Modules.Manifest;
     Name = "BinderDyn.OrchardCore.EventSourcing.Abstractions",
     Author = "Marvin Binder",
     Website = "https://marvinbinder.com",
-    Version = "1.1.0",
+    Version = "1.2.0",
     Description = "BinderDyn.OrchardCore.EventSourcing.Abstractions",
     Category = "Event Sourcing",
     EnabledByDependencyOnly = true
