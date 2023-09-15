@@ -1,6 +1,4 @@
-﻿using BinderDyn.OrchardCore.EventSourcing.Postgres.Data;
-using BinderDyn.OrchardCore.EventSourcing.Services;
-using BinderDyn.OrchardCore.EventSourcing.SqlServer.Data;
+﻿using BinderDyn.OrchardCore.EventSourcing.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;

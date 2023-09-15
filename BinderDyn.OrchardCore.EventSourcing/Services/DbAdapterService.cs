@@ -15,8 +15,8 @@ public class DbAdapterService : IDbAdapterService
 {
     private readonly IDbConnectionProvider _dbConnectionProvider;
     private readonly IServiceProvider _serviceProvider;
-    
-    public DbAdapterService(IDbConnectionProvider dbConnectionProvider, 
+
+    public DbAdapterService(IDbConnectionProvider dbConnectionProvider,
         IServiceProvider serviceProvider)
     {
         _dbConnectionProvider = dbConnectionProvider;
@@ -29,7 +29,7 @@ public class DbAdapterService : IDbAdapterService
 
         return dbProvider switch
         {
-            "SqlConnection" => _serviceProvider.GetRequiredService<SqlDbContextFactory>().CreateDbContext(),
+            "SqlConnection" => _serviceProvider.GetRequiredService<EventSourcingSqlDbContext>(),
             "Postgres" => _serviceProvider.GetRequiredService<EventSourcingPostgresDbContext>(),
             "MySql" => _serviceProvider.GetRequiredService<EventSourcingMySqlDbContext>(),
             _ => throw new NotImplementedException(dbProvider)
