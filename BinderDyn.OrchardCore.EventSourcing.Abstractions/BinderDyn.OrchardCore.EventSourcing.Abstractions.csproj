@@ -27,7 +27,7 @@
         <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.11" />
         <PackageReference Include="OrchardCore.Module.Targets" Version="1.7.0" />
         <PackageReference Include="OrchardCore.ContentManagement" Version="1.7.0" />
-        <PackageReference Include="OrchardCore.ContentTypes.Abstractions" Version="1.7.0" />
+        <PackageReference Include="OrchardCore.ContentTypes.Abstractions" Version="1.7.2" />
         <PackageReference Include="OrchardCore.DisplayManagement" Version="1.7.0" />
     </ItemGroup>
 
