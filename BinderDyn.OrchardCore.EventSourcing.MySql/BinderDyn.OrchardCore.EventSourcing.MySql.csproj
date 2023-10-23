@@ -27,11 +27,11 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="MySql.EntityFrameworkCore" Version="7.0.5"/>
-        <PackageReference Include="OrchardCore.Module.Targets" Version="1.7.0"/>
-        <PackageReference Include="OrchardCore.ContentManagement" Version="1.7.0"/>
-        <PackageReference Include="OrchardCore.ContentTypes.Abstractions" Version="1.7.0"/>
-        <PackageReference Include="OrchardCore.DisplayManagement" Version="1.7.0"/>
+        <PackageReference Include="MySql.EntityFrameworkCore" Version="7.0.5" />
+        <PackageReference Include="OrchardCore.Module.Targets" Version="1.7.0" />
+        <PackageReference Include="OrchardCore.ContentManagement" Version="1.7.0" />
+        <PackageReference Include="OrchardCore.ContentTypes.Abstractions" Version="1.7.2" />
+        <PackageReference Include="OrchardCore.DisplayManagement" Version="1.7.0" />
     </ItemGroup>
 
     <ItemGroup>
