@@ -11,7 +11,7 @@
         <Copyright>Marvin Binder 2023</Copyright>
         <RepositoryUrl>https://github.com/BinderDyn/BinderDyn.OrchardCore.EventSourcing</RepositoryUrl>
         <PackageTags>Events,OrchardCore,EventSourcing</PackageTags>
-        <Version>1.2.1</Version>
+        <Version>1.2.2</Version>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <PackageReadmeFile>README.md</PackageReadmeFile>

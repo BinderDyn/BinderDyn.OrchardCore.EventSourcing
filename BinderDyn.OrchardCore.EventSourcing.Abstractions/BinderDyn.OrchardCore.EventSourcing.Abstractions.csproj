@@ -5,7 +5,7 @@
         <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
-        <Version>1.2.1</Version>
+        <Version>1.2.2</Version>
         <Title>BinderDyn.OrchardCore.EventSourcing.Abstractions</Title>
         <Authors>Marvin Binder</Authors>
         <Description>Offers abstractions for event sourcing and data access</Description>
